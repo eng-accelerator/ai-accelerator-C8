@@ -1,0 +1,179 @@
+{
+  "name": "Personalized Newsletter",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "bedcdd52-3fa1-4d05-bb13-a28ec3f14a66",
+      "name": "When chat message received",
+      "webhookId": "b54184a3-d65c-4aa9-9779-6547ef3c52bd"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "ae0d1a2f-3573-4cd7-bbdd-881614c60e9a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        160
+      ],
+      "id": "15e33ff3-4097-4434-8885-3ddebf7d633e",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ggBe4vtqeEYGnxfb",
+          "name": "ai scraper"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        192
+      ],
+      "id": "421b84a1-dd60-4184-b6f2-4558c443cfdc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        176
+      ],
+      "id": "825fb546-383e-477e-8342-adae6bcd3ae0",
+      "name": "Send a message in Gmail",
+      "webhookId": "ae4b53cf-c538-4164-a129-4301114b253e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XuyNP5CL0cHng3Yi",
+          "name": "Gmail account 18"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        352,
+        160
+      ],
+      "id": "0ce44c44-ced4-4fd5-a0d1-148d53890282",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "Uu5FdQmWBtLuRfTb",
+          "name": "Tavily account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6df29c33-17f8-478b-bfd2-40e2a3ffca26",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5adcf055af070598f43d6403984bb72f646a6684587b890d0694cbc7278091f8"
+  },
+  "id": "A2wwzWpqdj5WLAoE",
+  "tags": []
+}

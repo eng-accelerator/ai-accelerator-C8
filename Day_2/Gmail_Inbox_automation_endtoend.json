@@ -1,0 +1,341 @@
+{
+  "name": "Gmail_Inbox_automation_endtoend",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        -32
+      ],
+      "id": "8ca75e7c-2251-4e7b-963e-aae9cab2a298",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject-  {{ $json.Subject }}\nBody- {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Important Emails",
+              "description": "Any email which ask about project consultancy requests, mentoring requests, implementing AI strategies etc. should be classified in this category "
+            },
+            {
+              "category": "Newsletters ",
+              "description": "Any email which talks about product updates, news should be classified into this category"
+            },
+            {
+              "category": "Subscription related and billing related ",
+              "description": "Which is related to renewals, billing-related information should be classified to this category. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "2c4a944a-3080-4bc6-809f-8c9f879c2b86",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        176
+      ],
+      "id": "38e2a295-6eae-4008-8785-8b71b5519c19",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ggBe4vtqeEYGnxfb",
+          "name": "ai scraper"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        208
+      ],
+      "id": "c2ce02ef-6b51-45fe-976b-b3142e7bec93",
+      "name": "Delete a message",
+      "webhookId": "2e53f2d3-8bd3-4d6a-bdd5-0d31cb6bc9c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "create",
+        "name": "Important Email",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -112
+      ],
+      "id": "5f7bebbb-58ad-4844-8014-8bc802c9043f",
+      "name": "Create a label",
+      "webhookId": "a54cdca9-be60-4850-aede-085f1269859a",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "IMPORTANT",
+          "Label_1",
+          "Label_2"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        -112
+      ],
+      "id": "2ed61262-f85f-4423-92d2-b5b64f3e5c2f",
+      "name": "Add label to message",
+      "webhookId": "69c6beec-8b24-43be-8d58-88fcfe075d60",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject-  {{ $('Gmail Trigger').item.json.Subject }}\n\nBody- {{ $('Gmail Trigger').item.json.snippet }}",
+        "options": {
+          "systemMessage": "=You are an expert email writer who have written for the brands like Mckensy.\n\nContext:\n* Company name: Tech Wizards\n* Services: Technology consulting and project execution\n* Availability: 7–8 PM and 8–9 PM IST, Monday to Friday\n\nTask: Draft a reply to the given email or message.\n\n\nGuidelines:\n* Tone: Friendly, professional, and precise\n* Keep the response concise and clear\n* Naturally incorporate the company’s services when relevant\n* Offer the available time slots when scheduling is needed\n* Do not include a subject line\n* Do not use em-dashes\n* End the email with: Thanks & Reagrds,\nTech Wizards\n\nOutput: A well-structured email reply following the above guidelines."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        720,
+        -109.28571428571428
+      ],
+      "id": "8b95d153-18cf-45a2-b6cd-81d3d2df6bb2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        592,
+        112
+      ],
+      "id": "f2cf58cb-ce41-425e-b341-f6606deebd86",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ggBe4vtqeEYGnxfb",
+          "name": "ai scraper"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        -176
+      ],
+      "id": "48de5887-9190-4a95-887b-dc954b5d57ee",
+      "name": "Reply to a message",
+      "webhookId": "dbc1caad-eb1a-4458-b309-cd901af57da9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Gmail Trigger').item.json.Subject }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+          "sendTo": "={{ $('Gmail Trigger').item.json.From }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        64
+      ],
+      "id": "47409689-80b7-425d-89ca-4d5b22f1c7bf",
+      "name": "Create a draft",
+      "webhookId": "117f944a-141b-4be4-a475-bb320d1c1ef6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XOgtWKTp6PiU03hV",
+          "name": "Divij-Mentor"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Create a label",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Create a label": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b4c45649-e00a-43b4-9161-45da25920148",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5adcf055af070598f43d6403984bb72f646a6684587b890d0694cbc7278091f8"
+  },
+  "id": "DfGOx24rO1DoWwTl",
+  "tags": []
+}
