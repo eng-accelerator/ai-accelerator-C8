@@ -78,7 +78,7 @@ If you get stuck:
 
 ## Assignment 2: Advanced RAG Techniques
 
-**File:** `assignment_2_advanced_rag_answer.ipynb`  
+**File:** `assignment_2_advanced_rag.ipynb`  
 **Solution:** `assignment_2_solution.ipynb`
 
 ### Objective
@@ -108,7 +108,7 @@ Master advanced RAG techniques that transform basic document retrieval into prod
 
 ### Instructions
 1. Complete Assignment 1 before starting this one
-2. Open `assignment_2_advanced_rag_answer.ipynb`
+2. Open `assignment_2_advanced_rag.ipynb`
 3. Complete each function by replacing the TODO comments
 4. Run each cell after completing the function to test it
 5. Refer to the `03_advanced_rag_techniques.ipynb` notebook for examples
