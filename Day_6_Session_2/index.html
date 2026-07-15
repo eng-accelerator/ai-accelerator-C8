@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Grade Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 14px 40px rgba(17, 24, 39, 0.08);
+      max-width: 420px;
+      width: 100%;
+      padding: 32px;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .result {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .result p {
+      margin: 8px 0;
+    }
+
+    .error {
+      margin-top: 18px;
+      color: #b91c1c;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Student Grade Calculator</h1>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="Enter student name" />
+    </div>
+
+    <div class="field">
+      <label for="marks">Marks</label>
+      <input id="marks" type="number" placeholder="Enter marks (0-100)" min="0" max="100" />
+    </div>
+
+    <button id="submitBtn">Submit</button>
+
+    <div id="result" class="result" style="display: none;">
+      <p><strong>Name:</strong> <span id="resultName"></span></p>
+      <p><strong>Marks:</strong> <span id="resultMarks"></span></p>
+      <p><strong>Grade:</strong> <span id="resultGrade"></span></p>
+    </div>
+
+    <div id="error" class="error" style="display: none;"></div>
+  </div>
+
+  <script>
+    const apiUrl = 'http://127.0.0.1:8000/students';
+    const nameInput = document.getElementById('name');
+    const marksInput = document.getElementById('marks');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultBox = document.getElementById('result');
+    const errorBox = document.getElementById('error');
+    const resultName = document.getElementById('resultName');
+    const resultMarks = document.getElementById('resultMarks');
+    const resultGrade = document.getElementById('resultGrade');
+
+    // Handle the button click and send a POST request to the FastAPI endpoint.
+    submitBtn.addEventListener('click', async () => {
+      errorBox.style.display = 'none';
+      resultBox.style.display = 'none';
+
+      const name = nameInput.value.trim();
+      const marks = Number(marksInput.value);
+
+      if (!name) {
+        showError('Please enter a valid name.');
+        return;
+      }
+
+      if (!Number.isInteger(marks) || marks < 0 || marks > 100) {
+        showError('Please enter valid marks between 0 and 100.');
+        return;
+      }
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, marks }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Request failed.');
+        }
+
+        const data = await response.json();
+        displayResult(data);
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+    function displayResult(data) {
+      resultName.textContent = data.name;
+      resultMarks.textContent = data.marks;
+      resultGrade.textContent = data.grade;
+      resultBox.style.display = 'block';
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
