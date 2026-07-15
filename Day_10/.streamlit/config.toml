@@ -1,0 +1,9 @@
+[server]
+# transformers (pulled in by sentence-transformers, for the free HuggingFace
+# embeddings) ships "fast" image processors for ~40 vision models that import
+# torchvision at module load time. We never install torchvision (nothing here
+# uses images), so Streamlit's file watcher hits ModuleNotFoundError walking
+# every one of them and floods the terminal with tracebacks. Not fatal, just
+# extremely noisy -- turning the watcher off is simpler than installing an
+# unused ~200MB package just to satisfy an introspection pass we don't need.
+fileWatcherType = "none"

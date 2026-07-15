@@ -1,0 +1,26 @@
+employee_id,name,department,role,age,city,years_experience,salary,performance_score
+1,Ava Thompson,Engineering,Software Engineer,29,Austin,4,98000,4.2
+2,Liam Chen,Engineering,Senior Software Engineer,34,Austin,9,128000,4.6
+3,Sophia Patel,Engineering,Engineering Manager,41,Seattle,14,152000,4.5
+4,Noah Rodriguez,Engineering,Software Engineer,26,Remote,2,84000,3.8
+5,Emma Johnson,Sales,Account Executive,31,Chicago,6,92000,4.0
+6,Oliver Smith,Sales,Sales Manager,39,Chicago,12,118000,4.3
+7,Isabella Garcia,Sales,Account Executive,27,Denver,3,78000,3.6
+8,Ethan Brown,Marketing,Marketing Specialist,28,New York,4,71000,3.9
+9,Mia Davis,Marketing,Marketing Manager,37,New York,11,110000,4.4
+10,Lucas Martinez,Marketing,Content Strategist,25,Remote,2,64000,3.5
+11,Amelia Wilson,HR,HR Generalist,33,Boston,7,73000,4.1
+12,Benjamin Anderson,HR,HR Manager,44,Boston,16,105000,4.3
+13,Charlotte Taylor,Finance,Financial Analyst,30,San Francisco,5,89000,4.0
+14,James Thomas,Finance,Finance Manager,42,San Francisco,15,132000,4.5
+15,Amelia Moore,Support,Support Specialist,24,Remote,1,52000,3.4
+16,Henry Jackson,Support,Support Lead,36,Denver,10,81000,4.2
+17,Evelyn White,Engineering,Software Engineer,32,Seattle,7,112000,4.3
+18,Alexander Harris,Engineering,Staff Software Engineer,45,Seattle,18,165000,4.7
+19,Harper Martin,Sales,Account Executive,29,Chicago,5,86000,3.9
+20,Sebastian Thompson,Sales,Sales Director,48,Chicago,20,145000,4.6
+21,Ella Garcia,Marketing,Marketing Specialist,26,New York,3,68000,3.7
+22,Jack Martinez,HR,HR Generalist,38,Boston,9,79000,3.9
+23,Scarlett Robinson,Finance,Senior Financial Analyst,35,San Francisco,9,104000,4.2
+24,Daniel Clark,Support,Support Specialist,27,Remote,3,58000,3.6
+25,Grace Lewis,Engineering,Software Engineer,23,Austin,1,80000,3.5
