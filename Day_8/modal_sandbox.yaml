@@ -1,0 +1,20 @@
+# Modal.com sandbox configuration for Inspect AI
+# Requires: pip install modal && modal token new
+#
+# Modal sandbox support in Inspect is experimental.
+# If your Inspect version doesn't support sandbox=("modal", ...),
+# fall back to Docker: inspect eval task_landing_page.py -T sandbox_type=docker
+
+provider: modal
+image:
+  base: "debian:bookworm-slim"
+  apt_packages:
+    - nodejs
+    - npm
+    - python3
+    - python3-pip
+    - curl
+    - git
+  commands:
+    - "npm install -g live-server"
+timeout: 600

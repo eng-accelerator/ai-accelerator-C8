@@ -1,0 +1,15 @@
+[project]
+name = "edutech-evals"
+version = "0.1.0"
+description = "LLM evals: landing page coding + code critique"
+requires-python = ">=3.11"
+dependencies = [
+    "inspect-ai>=0.3",
+    "openai",
+]
+
+[project.optional-dependencies]
+modal = ["modal"]
+
+[tool.inspect]
+log_dir = "./logs"

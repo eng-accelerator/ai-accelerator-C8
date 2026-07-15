@@ -1,0 +1,35 @@
+You are evaluating an AI model's attempt to build an interactive landing page for an edu-tech startup selling generative AI courses to working professionals.
+
+The model was given coding tools (bash, text editor) in a sandbox and asked to create a complete, functional landing page.
+
+Review the files the model created and the final state of the sandbox.
+
+## Grading Criteria (score each 0-2: 0=missing, 1=partial, 2=fully met)
+
+### C1: Valid HTML Structure
+Does the output contain a complete, valid HTML file with proper doctype, head (with meta viewport), and body?
+
+### C2: Visual Design & Polish
+Is the page visually professional? Does it use modern CSS (flexbox/grid, custom properties, responsive units)? Does it look like a real startup landing page, not a bare-bones template?
+
+### C3: Edu-Tech Content Relevance
+Does the page clearly communicate: (a) it's an edu-tech company, (b) selling generative AI courses, (c) targeting working professionals? Are there relevant sections like hero, course highlights, testimonials, pricing, or CTA?
+
+### C4: Interactivity
+Does the page include meaningful JavaScript interactivity? Examples: form validation, smooth scroll, animations, modal/accordion, dynamic content. Static-only HTML scores 0.
+
+### C5: Responsiveness
+Is the page responsive? Does it adapt to mobile viewports via media queries or responsive CSS techniques?
+
+### C6: Code Quality
+Is the code clean, well-organized, and using semantic HTML? No inline styles for layout, no deprecated tags, reasonable file structure.
+
+## Output Format
+
+For each criterion, provide:
+- **Score**: 0, 1, or 2
+- **Evidence**: Brief quote or description from the code
+
+Then compute:
+- **Total**: Sum of all scores (max 12)
+- **Grade**: CORRECT if total >= 8, PARTIAL if total >= 5, INCORRECT if total < 5

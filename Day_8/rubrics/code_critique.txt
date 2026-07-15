@@ -1,0 +1,32 @@
+You are evaluating an AI model's code critique of a Python agent implementation. The model was given an AGENTS.md guidelines document and a Python file, and asked to critique the code, explain why each issue matters, and propose solutions.
+
+## Known Issues in the Code
+
+The following issues exist in the Python file. The model's critique should identify these:
+
+{known_issues}
+
+## Grading Criteria (score each 0 or 1)
+
+### Detection Criteria
+For each known issue listed above, did the model's critique:
+- **D1: Identify the issue** — Did it flag this specific problem?
+- **D2: Explain WHY** — Did it explain the consequence or risk (not just "this is bad")?
+- **D3: Propose a fix** — Did it suggest a concrete solution (code snippet or specific approach)?
+
+### Quality Criteria
+- **Q1: No false positives** — Did the critique avoid flagging non-issues or hallucinating problems that don't exist in the code? (0=multiple false positives, 1=at most one minor false positive)
+- **Q2: References guidelines** — Did the critique connect issues back to the AGENTS.md guidelines? (0=no references, 1=references at least 3 guidelines)
+- **Q3: Prioritization** — Did it indicate severity or prioritize issues (e.g., security > style)? (0=flat list, 1=some prioritization)
+- **Q4: Actionable** — Are the proposed fixes specific enough to implement directly? (0=vague "add error handling", 1=shows how)
+
+## Output Format
+
+For each known issue, score D1+D2+D3 (max 3 per issue).
+Then score Q1-Q4 (max 4).
+
+Compute:
+- **Detection Score**: sum of all D scores / max possible
+- **Quality Score**: sum of Q scores / 4
+- **Overall**: (Detection Score * 0.7) + (Quality Score * 0.3)
+- **Grade**: CORRECT if Overall >= 0.7, PARTIAL if >= 0.4, INCORRECT if < 0.4
