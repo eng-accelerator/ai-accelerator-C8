@@ -301,14 +301,15 @@
         <p class="kicker">Today's flow</p>
         <h2>Where we're going</h2>
         <div class="grid3">
-          <div class="card"><h3>1 &middot; The idea</h3><p>What LangGraph is, why a graph, and the three building blocks: <b>State</b>, <b>Nodes</b>, <b>Edges</b>.</p></div>
-          <div class="card"><h3>2 &middot; The lifecycle</h3><p><span class="mono">build &rarr; compile &rarr; invoke</span> &mdash; how a graph goes from description to running.</p></div>
-          <div class="card"><h3>3 &middot; Example 1</h3><p><span class="mono">simple_graph.py</span> &mdash; the smallest full graph, with a conditional branch.</p></div>
-          <div class="card"><h3>4 &middot; Example 2</h3><p><span class="mono">state_flow_demo.py</span> &mdash; watch state actually move, node by node.</p></div>
+          <div class="card"><h3>1 &middot; The idea</h3><p>What LangGraph is, and the three building blocks: <b>State</b>, <b>Nodes</b>, <b>Edges</b>.</p></div>
+          <div class="card"><h3>2 &middot; The lifecycle</h3><p><span class="mono">build &rarr; compile &rarr; invoke</span> &mdash; description to running.</p></div>
+          <div class="card"><h3>3 &middot; Example 1</h3><p><span class="mono">simple_graph.py</span> &mdash; a graph with a conditional branch.</p></div>
+          <div class="card"><h3>4 &middot; Example 2</h3><p><span class="mono">state_flow_demo.py</span> &mdash; watch state move, node by node.</p></div>
           <div class="card"><h3>5 &middot; Example 3</h3><p><span class="mono">memory_demo.py</span> &mdash; a graph that remembers across turns.</p></div>
-          <div class="card"><h3>6 &middot; Studio</h3><p>See a graph run <b>visually</b> in LangGraph Studio.</p></div>
-          <div class="card"><h3>7 &middot; LangSmith</h3><p><b>Observability + evals</b> &mdash; trace every step, then score it.</p></div>
-          <div class="card"><h3>8 &middot; Deploy + Q&amp;A</h3><p>Get your agent in front of others <b>for free</b>, then questions.</p></div>
+          <div class="card"><h3>6 &middot; Example 4</h3><p><span class="mono">storygen.py</span> &mdash; a real app that waits for a human.</p></div>
+          <div class="card"><h3>7 &middot; Studio</h3><p>See a graph run <b>visually</b> in LangGraph Studio.</p></div>
+          <div class="card"><h3>8 &middot; LangSmith</h3><p><b>Observability + evals</b> &mdash; live demos of <span class="mono">langsmith-simple</span> + <span class="mono">agent-eval</span>.</p></div>
+          <div class="card"><h3>9 &middot; Deploy + Q&amp;A</h3><p>Get your agent in front of others <b>for free</b>, then questions.</p></div>
         </div>
         <div class="callout">
           <span class="callout-label">The thread through the whole session</span>
@@ -1011,6 +1012,122 @@ bob   : 1 turn</code></pre></div>
       </div>
     </section>
 
+    <!-- 10d) EXAMPLE 4 storygen INTRO -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Example 4 &middot; a real app</p>
+        <h2>storygen.py &mdash; a story that waits for you</h2>
+        <div class="cols">
+          <div class="col">
+            <p>A <b>choose-your-own-adventure</b> built with Streamlit &mdash; but its <b>brain is a LangGraph</b>. The <i>same</i> State, Nodes, and Edges you've seen, now scaled up to a full app.</p>
+            <ul class="bullets">
+              <li>The graph writes <b>one scene</b>, then <b>stops</b> and hands control back to a person.</li>
+              <li>You read the scene, <b>click a choice</b>, and only then does the story move on.</li>
+            </ul>
+            <p class="muted" style="font-size:16px;">Run it: <span class="mono">streamlit run storygen.py</span></p>
+          </div>
+          <div class="col">
+            <div class="callout">
+              <span class="callout-label">Human-in-the-loop</span>
+              The graph doesn't run to the end on its own. It produces <b>one step</b>, then <b>waits for a human</b> before continuing &mdash; that pause is the whole point.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10e) EXAMPLE 4 storygen FLOW -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Example 4 &middot; the flow</p>
+        <h2>One scene, then it waits</h2>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 380" role="img" aria-label="storygen flow: the compiled graph makes one scene then stops; a manual loop driven between Streamlit reruns advances the story">
+            <defs>
+              <marker id="mkStory" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+              </marker>
+            </defs>
+            <!-- compiled row -->
+            <text x="20" y="28" font-size="13" font-weight="700" fill="#0c7d61">THE COMPILED GRAPH &mdash; makes only the opening scene</text>
+            <rect x="20" y="44" width="96" height="46" rx="23" fill="#10a37f"/>
+            <text x="68" y="72" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">START</text>
+            <rect x="150" y="44" width="180" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="240" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">initialize_story</text>
+            <rect x="364" y="44" width="180" height="46" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="454" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">generate_scene</text>
+            <rect x="700" y="44" width="90" height="46" rx="23" fill="#0d0d0d"/>
+            <text x="745" y="72" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">END</text>
+            <line x1="116" y1="67" x2="146" y2="67" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <line x1="330" y1="67" x2="360" y2="67" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <line x1="544" y1="67" x2="696" y2="67" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <text x="620" y="58" text-anchor="middle" font-size="11" fill="#0c7d61">stops here &mdash; waits for a click</text>
+            <!-- manual loop box -->
+            <rect x="14" y="120" width="932" height="244" rx="14" fill="#fafafa" stroke="#10a37f" stroke-width="1.5" stroke-dasharray="7 5"/>
+            <text x="30" y="146" font-size="13" font-weight="700" fill="#0c7d61">DRIVEN BY HAND &mdash; between Streamlit reruns, one scene per click</text>
+            <rect x="30" y="176" width="126" height="46" rx="10" fill="#fff" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="93" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c7d61">click a choice</text>
+            <rect x="192" y="176" width="150" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="267" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1a1a1a">process_choice</text>
+            <rect x="378" y="176" width="170" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="463" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1a1a1a">update_world_state</text>
+            <rect x="584" y="176" width="160" height="46" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="664" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c7d61">generate_scene</text>
+            <rect x="780" y="176" width="150" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="855" y="200" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">show + wait</text>
+            <text x="855" y="215" text-anchor="middle" font-size="10" fill="#8a8a90">for next click</text>
+            <line x1="156" y1="199" x2="188" y2="199" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <line x1="342" y1="199" x2="374" y2="199" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <line x1="548" y1="199" x2="580" y2="199" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <line x1="744" y1="199" x2="776" y2="199" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+            <!-- loop back dashed -->
+            <path d="M855,222 C855,268 160,262 93,240" stroke="#8a8a90" stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#mkStory)"/>
+            <text x="470" y="272" text-anchor="middle" font-size="11" fill="#8a8a90">the next click steps the story again</text>
+            <!-- ending branch -->
+            <path d="M93,222 C93,300 300,312 374,312" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkStory)"/>
+            <text x="150" y="300" font-size="11" fill="#0c7d61">story long enough</text>
+            <rect x="378" y="290" width="170" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="463" y="318" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1a1a1a">generate_ending</text>
+            <rect x="584" y="290" width="130" height="46" rx="23" fill="#0d0d0d"/>
+            <text x="649" y="318" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">THE END</text>
+            <line x1="548" y1="313" x2="580" y2="313" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkStory)"/>
+          </svg>
+        </div>
+        <p class="muted" style="font-size:16px;">The <b>compiled</b> graph (top) only makes the opening scene, then hits END. Everything after a click is the app driving <span class="mono">process_choice &rarr; update_world_state &rarr; generate_scene</span> <b>by hand</b>.</p>
+      </div>
+    </section>
+
+    <!-- 10f) EXAMPLE 4 storygen CODE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Example 4 &middot; why it stops</p>
+        <h2>Acyclic on purpose &mdash; the app drives the loop</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code>workflow.<span class="tok-lg">add_edge</span>(<span class="tok-lg">START</span>, <span class="tok-str">"initialize_story"</span>)
+workflow.<span class="tok-lg">add_edge</span>(<span class="tok-str">"initialize_story"</span>,
+                   <span class="tok-str">"generate_scene"</span>)
+<span class="tok-com"># leads to END — waits for user input</span>
+workflow.<span class="tok-lg">add_edge</span>(<span class="tok-str">"generate_scene"</span>, <span class="tok-lg">END</span>)</code></pre></div>
+            <p class="explain"><b>What this does:</b> the compiled graph is <b>deliberately acyclic</b> &mdash; it makes one scene and stops. There is no loop back inside the graph.</p>
+          </div>
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-kw">def</span> <span class="tok-fn">continue_story_after_choice</span>(
+        state, choice_id):
+    state[<span class="tok-str">"pending_choice"</span>] = choice_id
+    state = <span class="tok-fn">process_choice</span>(state)
+    state = <span class="tok-fn">update_world_state</span>(state)
+    <span class="tok-kw">return</span> <span class="tok-fn">generate_scene</span>(state)</code></pre></div>
+            <p class="explain"><b>What this does:</b> the next three steps run <b>by hand</b>. Streamlit <b>re-runs the whole script</b> on every click, so state lives in <span class="mono">st.session_state</span> and <span class="mono">pending_choice</span> carries the click across the rerun.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <span class="callout-label">Key idea</span>
+          The graph produces <b>one step</b>, then waits for a person &mdash; that's <b>human-in-the-loop</b>. The 'proper' cyclic version would use <span class="mono">interrupt()</span> plus a checkpointer to pause and resume inside the graph.
+        </div>
+      </div>
+    </section>
+
     <!-- 11a) STUDIO INTRO -->
     <section class="slide">
       <div class="slide-inner">
@@ -1338,6 +1455,84 @@ LANGSMITH_PROJECT=my-project   <span class="tok-com"># optional</span></code></p
       </div>
     </section>
 
+    <!-- LS4b) langsmith-simple INTRO + TRACE TREE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">LangSmith &middot; see a real trace</p>
+        <h2>langsmith-simple.py</h2>
+        <div class="cols">
+          <div class="col">
+            <p>Two <span class="mono">@traceable</span> functions form a tiny pipeline. Wrapping the client with <span class="mono">wrappers.wrap_openai</span> <b>auto-records every LLM call</b> &mdash; the "a trace is a tree of runs" idea, made real.</p>
+            <ul class="bullets">
+              <li><span class="mono">pipeline("black holes")</span> is the parent run.</li>
+              <li>It calls <span class="mono">ask_openai</span> (gpt-4o-mini), then <span class="mono">ask_claude</span> (claude-3-haiku).</li>
+              <li>Two <b>different providers</b> reached through <b>one OpenRouter key</b>.</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 260" role="img" aria-label="Trace tree: pipeline calls ask_openai and ask_claude, each an LLM run">
+                <defs>
+                  <marker id="mkLs" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="90" y="18" width="220" height="52" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="200" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">pipeline("black holes")</text>
+                <text x="200" y="59" text-anchor="middle" font-size="10" fill="#0c7d61">parent run</text>
+                <path d="M150,70 C150,110 120,110 120,140" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkLs)"/>
+                <path d="M250,70 C250,110 280,110 280,140" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkLs)"/>
+                <rect x="20" y="144" width="180" height="60" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <rect x="32" y="154" width="42" height="18" rx="5" fill="#e7f6f1" stroke="#10a37f"/>
+                <text x="53" y="167" text-anchor="middle" font-size="10" font-weight="700" fill="#0c7d61">LLM</text>
+                <text x="110" y="167" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1a1a1a">ask_openai</text>
+                <text x="110" y="190" text-anchor="middle" font-size="10" font-family="ui-monospace,Menlo,monospace" fill="#8a8a90">gpt-4o-mini &middot; 0.9s</text>
+                <rect x="200" y="144" width="180" height="60" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <rect x="212" y="154" width="42" height="18" rx="5" fill="#e7f6f1" stroke="#10a37f"/>
+                <text x="233" y="167" text-anchor="middle" font-size="10" font-weight="700" fill="#0c7d61">LLM</text>
+                <text x="292" y="167" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1a1a1a">ask_claude</text>
+                <text x="290" y="190" text-anchor="middle" font-size="10" font-family="ui-monospace,Menlo,monospace" fill="#8a8a90">claude-3-haiku &middot; 0.6s</text>
+                <text x="110" y="228" text-anchor="middle" font-size="10" fill="#8a8a90">OpenAI provider</text>
+                <text x="290" y="228" text-anchor="middle" font-size="10" fill="#8a8a90">Anthropic provider</text>
+                <text x="200" y="250" text-anchor="middle" font-size="10.5" fill="#0c7d61">one OpenRouter key reaches both</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS4c) langsmith-simple CODE + WHAT YOU SEE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">LangSmith &middot; the code</p>
+        <h2>A decorator, a wrapper, three env vars</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code>client = wrappers.<span class="tok-lg">wrap_openai</span>(OpenAI(
+    base_url=<span class="tok-str">"https://openrouter.ai/api/v1"</span>,
+    api_key=OPENROUTER_KEY))
+
+<span class="tok-lg">@traceable</span>
+<span class="tok-kw">def</span> <span class="tok-fn">ask_openai</span>(topic):
+    ...   <span class="tok-com"># normal OpenAI call — now traced</span></code></pre></div>
+            <p class="explain"><b>What this does:</b> <span class="mono">wrap_openai</span> auto-logs every model call; <span class="mono">@traceable</span> records your own functions as runs. <b>No logic changes.</b></p>
+          </div>
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-com"># .env — the three that matter</span>
+<span class="tok-lg">LANGSMITH_TRACING</span>=true
+<span class="tok-lg">LANGSMITH_API_KEY</span>=lsv2_...
+<span class="tok-lg">LANGSMITH_PROJECT</span>=langsmith-simple-demo</code></pre></div>
+            <p class="explain"><b>What this does:</b> add a decorator, wrap the client, set 3 env vars &mdash; and <b>every run shows up</b> at <span class="mono">smith.langchain.com</span>. Run it: <span class="mono">python langsmith-simple.py</span>.</p>
+            <div class="callout">
+              <span class="callout-label">Free observability</span>
+              You didn't restructure anything &mdash; you <b>bolted tracing on</b>. The trace tree from the last slide appears with inputs, outputs, and timing for both providers.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- LS5) PROJECTS + DATASETS & EXAMPLES -->
     <section class="slide">
       <div class="slide-inner">
@@ -1482,6 +1677,138 @@ LANGSMITH_PROJECT=my-project   <span class="tok-com"># optional</span></code></p
               </svg>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS7b) agent-eval THE AGENT -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">LangSmith &middot; a real agent</p>
+        <h2>agent-eval.py &mdash; an agent, then graded</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 300" role="img" aria-label="Tool-calling loop: agent decides whether to call a tool, tools run add or multiply and loop back, otherwise END">
+                <defs>
+                  <marker id="mkAe" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="150" y="16" width="100" height="42" rx="21" fill="#10a37f"/>
+                <text x="200" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">START</text>
+                <rect x="120" y="96" width="160" height="52" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="200" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#0c7d61">agent</text>
+                <text x="200" y="138" text-anchor="middle" font-size="10" fill="#0c7d61">tool call?</text>
+                <rect x="30" y="200" width="150" height="52" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="105" y="224" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">tools</text>
+                <text x="105" y="242" text-anchor="middle" font-size="10" fill="#8a8a90">add / multiply</text>
+                <rect x="290" y="204" width="90" height="44" rx="22" fill="#0d0d0d"/>
+                <text x="335" y="231" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">END</text>
+                <line x1="200" y1="58" x2="200" y2="92" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkAe)"/>
+                <path d="M150,148 L110,196" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkAe)"/>
+                <text x="70" y="180" text-anchor="middle" font-size="11" fill="#0c7d61">"tools"</text>
+                <path d="M258,148 L300,200" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkAe)"/>
+                <text x="330" y="180" text-anchor="middle" font-size="11" fill="#8a8a90">no call &rarr; END</text>
+                <path d="M105,200 C105,160 150,150 178,140" stroke="#8a8a90" stroke-width="2" fill="none" stroke-dasharray="4 4" marker-end="url(#mkAe)"/>
+                <text x="70" y="120" text-anchor="middle" font-size="10" fill="#8a8a90">loop back</text>
+              </svg>
+            </div>
+          </div>
+          <div class="col">
+            <p>A <b>ReAct-style tool-using agent</b>: the model may call <span class="mono">add</span> or <span class="mono">multiply</span>, sees the result, then decides again &mdash; looping until it has an answer.</p>
+            <div class="code"><pre><code><span class="tok-kw">def</span> <span class="tok-fn">should_continue</span>(state):
+    <span class="tok-kw">if</span> state[<span class="tok-str">"messages"</span>][-1].tool_calls:
+        <span class="tok-kw">return</span> <span class="tok-str">"tools"</span>
+    <span class="tok-kw">return</span> <span class="tok-lg">END</span>
+
+graph.<span class="tok-lg">add_edge</span>(<span class="tok-str">"tools"</span>, <span class="tok-str">"agent"</span>)  <span class="tok-com"># the loop</span></code></pre></div>
+            <p class="explain"><b>What this does:</b> state is a growing <span class="mono">messages</span> list (an <span class="mono">operator.add</span> reducer appends). Run it: <span class="mono">python agent-eval.py</span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS7c) agent-eval THE THREE EVALUATORS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">LangSmith &middot; measuring quality</p>
+        <h2>Three ways to grade the answer</h2>
+        <p class="muted" style="font-size:16px;">A small dataset of <b>4 math Q&amp;A</b> &rarr; run the agent on each &rarr; score every output with <b>three different evaluators</b>.</p>
+        <div class="grid3">
+          <div class="card"><h3>1 &middot; exact-match</h3><p>A <b>code check</b>: does the answer string <b>equal</b> the reference exactly? Fast, free, deterministic.</p></div>
+          <div class="card"><h3>2 &middot; LLM-as-a-judge</h3><p>A <b>second LLM</b> reads the question, reference, and answer and decides if it's <b>mathematically correct</b>.</p></div>
+          <div class="card"><h3>3 &middot; trajectory</h3><p>Does the <b>expected number</b> appear anywhere in the answer? Tolerant of extra words.</p></div>
+        </div>
+        <div class="callout">
+          <span class="callout-label">Same outputs, three lenses</span>
+          Each evaluator returns a <span class="mono">score</span> of 0 or 1 per example. Same agent answers, judged three different ways &mdash; and they <b>won't agree</b>.
+        </div>
+      </div>
+    </section>
+
+    <!-- LS7d) agent-eval THE PUNCHLINE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">LangSmith &middot; the real result</p>
+        <h2>Correct answers, but exact-match says 0%</h2>
+        <div class="code" style="padding:0;overflow-x:auto;">
+          <table style="border-collapse:collapse;width:100%;font-family:var(--mono);font-size:clamp(12px,1.15vw,15px);">
+            <thead>
+              <tr style="background:var(--surface-2);">
+                <th style="text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">Question</th>
+                <th style="text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">Ref</th>
+                <th style="text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">Agent answer</th>
+                <th style="text-align:center;padding:10px 8px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">exact</th>
+                <th style="text-align:center;padding:10px 8px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">judge</th>
+                <th style="text-align:center;padding:10px 8px;border-bottom:1.5px solid var(--border-strong);color:var(--muted);font-weight:700;">traj</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">What is 2 + 3?</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">5</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">"2 + 3 is 5."</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:#b06a12;font-weight:700;">&#10007; 0</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+              </tr>
+              <tr>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">What is 4 + 6?</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">10</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">"4 + 6 equals 10."</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:#b06a12;font-weight:700;">&#10007; 0</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+              </tr>
+              <tr>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">What is 3 * 4?</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">12</td>
+                <td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);">"3 * 4 is 12."</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:#b06a12;font-weight:700;">&#10007; 0</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+                <td style="text-align:center;padding:9px 8px;border-bottom:1px solid var(--border);color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+              </tr>
+              <tr>
+                <td style="padding:9px 12px;color:var(--ink-2);">What is 5 * 5?</td>
+                <td style="padding:9px 12px;color:var(--ink-2);">25</td>
+                <td style="padding:9px 12px;color:var(--ink-2);">"5 * 5 is 25."</td>
+                <td style="text-align:center;padding:9px 8px;color:#b06a12;font-weight:700;">&#10007; 0</td>
+                <td style="text-align:center;padding:9px 8px;color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+                <td style="text-align:center;padding:9px 8px;color:var(--accent-ink);font-weight:700;">&#10003; 1</td>
+              </tr>
+              <tr style="background:var(--surface-2);font-weight:700;">
+                <td style="padding:10px 12px;color:var(--ink);" colspan="3">Score</td>
+                <td style="text-align:center;padding:10px 8px;color:#b06a12;">0.00</td>
+                <td style="text-align:center;padding:10px 8px;color:var(--accent-ink);">1.00</td>
+                <td style="text-align:center;padding:10px 8px;color:var(--accent-ink);">1.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="callout-label">The lesson</span>
+          Every agent answer is <b>correct</b> &mdash; but exact-match scores <b>0.00</b> because the agent replies in a sentence, not the bare number. <b>Exact string-match is too brittle for LLM output &mdash; which is exactly why LLM-as-a-judge and trajectory exist.</b>
         </div>
       </div>
     </section>
@@ -1790,7 +2117,7 @@ $ ../.venv/bin/langgraph dev <span class="tok-lg">--tunnel</span>
     <section class="slide">
       <div class="slide-inner">
         <p class="kicker">Recap</p>
-        <h2>Three blocks, three examples</h2>
+        <h2>The building blocks, the examples, the tools</h2>
         <div class="grid3">
           <div class="card"><h3>State</h3><p>A shared TypedDict that flows through every node.</p></div>
           <div class="card"><h3>Nodes</h3><p>Functions that read state, return a partial update.</p></div>
@@ -1798,11 +2125,12 @@ $ ../.venv/bin/langgraph dev <span class="tok-lg">--tunnel</span>
         </div>
         <ul class="bullets">
           <li><b>simple_graph.py</b> &rarr; <span class="em">conditional routing</span> &mdash; a router branches to the right handler.</li>
-          <li><b>state_flow_demo.py</b> &rarr; <span class="em">how state transfers</span> &mdash; watch IN &rarr; OUT &rarr; MERGE move data between nodes.</li>
+          <li><b>state_flow_demo.py</b> &rarr; <span class="em">how state transfers</span> &mdash; watch IN &rarr; OUT &rarr; MERGE between nodes.</li>
           <li><b>memory_demo.py</b> &rarr; <span class="em">persistence &amp; threads</span> &mdash; a checkpointer + thread_id remember across turns.</li>
-          <li><b>LangGraph Studio</b> &rarr; <span class="em">see it live</span> &mdash; the same transfer and threads, made visual.</li>
-          <li><b>LangSmith</b> &rarr; <span class="em">observability &amp; evals</span> &mdash; trace every step to debug, then score outputs against a dataset (incl. LLM-as-a-judge).</li>
-          <li><b>Deploy for free</b> &rarr; <span class="em">share it</span> &mdash; <span class="mono">langgraph dev --tunnel</span> for a live demo, or wrap the graph in a small app on a free host.</li>
+          <li><b>storygen.py</b> &rarr; <span class="em">a real app + human-in-the-loop</span> &mdash; one scene per click, the app drives the loop.</li>
+          <li><b>langsmith-simple.py</b> &rarr; <span class="em">tracing</span> &mdash; a decorator + a wrapper turn every run into a trace tree.</li>
+          <li><b>agent-eval.py</b> &rarr; <span class="em">evaluations</span> &mdash; exact-match, LLM-as-a-judge, and trajectory (exact-match is too brittle).</li>
+          <li><b>Studio + free deploy</b> &rarr; <span class="em">see it &amp; share it</span> &mdash; visual runs, then <span class="mono">langgraph dev --tunnel</span> or a small app on a free host.</li>
         </ul>
       </div>
     </section>
