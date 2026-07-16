@@ -56,10 +56,14 @@ LangGraph Studio. Verified on **LangGraph 1.x**.
 
 ## Prerequisites
 
-- **Python 3.10 or newer** (3.11 recommended). Check your version:
-  - macOS/Linux: `python3 --version`
-  - Windows: `py --version`
-- If you don't have it: download from [python.org](https://www.python.org/downloads/)
+- **Python 3.11 required** (3.10+ works; **3.9 does NOT** — LangGraph 1.x needs 3.10+).
+  Check what you have:
+  - macOS/Linux: `python3.11 --version`  (and `python3 --version`)
+  - Windows: `py -3.11 --version`
+- ⚠️ **macOS ships an old `python3` (often 3.9).** If `python3 --version` is below 3.10,
+  do **not** use plain `python3` below — use `python3.11` explicitly. Install it with
+  [Homebrew](https://brew.sh): `brew install python@3.11`.
+- Otherwise download 3.11 from [python.org](https://www.python.org/downloads/)
   (on Windows, tick **"Add Python to PATH"** in the installer).
 
 ---
@@ -71,7 +75,8 @@ LangGraph Studio. Verified on **LangGraph 1.x**.
 cd Day_11
 
 # 2. Create a virtual environment (isolated Python just for this project)
-python3 -m venv .venv
+#    Use python3.11 explicitly — plain `python3` on macOS is often 3.9 (too old).
+python3.11 -m venv .venv
 
 # 3. Activate it
 source .venv/bin/activate
@@ -90,8 +95,8 @@ pip install -r requirements.txt
 # 1. Go into this folder
 cd Day_11
 
-# 2. Create a virtual environment
-py -m venv .venv
+# 2. Create a virtual environment (pin 3.11 so you don't get an older Python)
+py -3.11 -m venv .venv
 
 # 3. Activate it
 .venv\Scripts\Activate.ps1
