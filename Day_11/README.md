@@ -35,6 +35,9 @@ LangGraph Studio. Verified on **LangGraph 1.x**.
 | `simple_graph.py` | **Start here.** The smallest complete graph: state, three nodes, a conditional edge (router), `START`/`END`, `compile()`, `invoke()`. The greeting branch is a plain node; the search branch calls an LLM via OpenRouter (works without a key too). |
 | `state_flow_demo.py` | **Interactive.** A console tool that prints every hand-off as data moves through the graph — the state going **IN** to each node, the **partial** it returns **OUT**, the **MERGE** back into state, which **EDGE** was taken, and the **ROUTER**'s decision. Step through it one node at a time. |
 | `memory_demo.py` | **Interactive.** How a graph *remembers*: a checkpointer (`InMemorySaver`) + a `thread_id` persist state across turns. Same `thread_id` resumes the saved memory; a different one starts fresh. With an API key it replies naturally using what it remembered. |
+| `agent-eval.py` | **A real tool-using agent + LangSmith evaluations.** An `agent ⇄ tools` loop (add/multiply tools) plus three evaluators — exact-match, **LLM-as-a-judge**, and trajectory — run over a dataset. The agent runs with just an OpenRouter key; the evaluations need a (free) LangSmith key. |
+| `langsmith-simple.py` | **The simplest LangSmith tracing demo.** Two `@traceable` steps form a pipeline (OpenAI → Claude, both via OpenRouter) that shows up as a trace tree at smith.langchain.com. Runs with an OpenRouter key; add a LangSmith key to see the trace. |
+| `storygen.py` | **A bigger app (Streamlit).** A multi-node LangGraph that generates an interactive, choose-your-own-adventure story — shows how far the same State/Nodes/Edges idea scales. Needs an OpenRouter key; run with `streamlit run storygen.py`. |
 | `studio/agent.py` | A small graph designed to be **watched** in LangGraph Studio: `classify → {greeting \| farewell \| complaint \| question} → finalize → END`. Runs with no API key. |
 | `studio/langgraph.json` | The manifest that tells `langgraph dev` which graph to load. |
 | `studio/.env.example` | Optional key template for the Studio graph's LLM branch. |
@@ -43,8 +46,11 @@ LangGraph Studio. Verified on **LangGraph 1.x**.
 | `.env.example` | Template for the optional OpenRouter API key. |
 
 > **No API key required** to learn the concepts — `state_flow_demo.py`, `memory_demo.py`,
-> and the Studio graph all run fully offline. A key only enables the LLM-backed reply in
-> `simple_graph.py`'s search branch and `memory_demo.py`.
+> and the Studio graph all run fully offline. An **OpenRouter** key enables the LLM replies
+> (`simple_graph.py`'s search branch, `memory_demo.py`, `agent-eval.py`, `langsmith-simple.py`,
+> `storygen.py`). The **LangSmith** demos (`agent-eval.py`, `langsmith-simple.py`) still run
+> with just an OpenRouter key — add a free `LANGSMITH_API_KEY` only to see traces/evals at
+> [smith.langchain.com](https://smith.langchain.com).
 
 ---
 
