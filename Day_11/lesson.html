@@ -1135,7 +1135,7 @@ workflow.<span class="tok-lg">add_edge</span>(<span class="tok-str">"generate_sc
         <h2>LangGraph Studio</h2>
         <div class="cols">
           <div class="col">
-            <p>The local dev server and visual UI for LangGraph. It discovers your compiled graph and renders it so you can watch it execute node-by-node &mdash; <b>no API key needed</b> for the demo graph.</p>
+            <p>The local dev server and visual UI for LangGraph. Point it at your compiled graph and it draws it, runs it, and lets you <b>chat with it</b>. Our Studio graph is an interactive <b>storyteller</b> &mdash; the same idea as <span class="mono">storygen.py</span>.</p>
             <div class="code"><pre><code><span class="tok-com"># launch the local dev server</span>
 $ cd studio &amp;&amp; ../.venv/bin/langgraph dev</code></pre></div>
             <p class="explain"><b>What this does:</b> starts the dev server, which reads <span class="mono">langgraph.json</span> and opens the visual graph UI. (Already running at <span class="mono">http://127.0.0.1:2024</span>.)</p>
@@ -1152,14 +1152,14 @@ $ cd studio &amp;&amp; ../.venv/bin/langgraph dev</code></pre></div>
           <div class="col">
             <ul class="bullets">
               <li><b>Graph topology</b> drawn as a diagram you can read at a glance.</li>
-              <li><b>Node-by-node run</b> with execution highlighting so you follow the path through the branch.</li>
-              <li><b>State inspector</b> on the right: fields fill in as each node runs.</li>
-              <li><b>Editable input</b> panel to change the message and re-run.</li>
-              <li><b>Threads / time-travel</b> persistence the dev server provides automatically.</li>
+              <li><b>Node-by-node run</b> with execution highlighting so you follow the path.</li>
+              <li><b>Chat tab</b>: type your move, the narrator continues the story.</li>
+              <li><b>State inspector</b>: watch the <span class="mono">messages</span> list grow each turn.</li>
+              <li><b>Threads / time-travel</b> persistence &mdash; your story continues across turns.</li>
             </ul>
-            <div class="callout warn">
-              <span class="callout-label">Heads up</span>
-              The <b>Chat tab is greyed out</b> because this graph's state uses plain <b>string</b> fields. Drive it from the <b>Input panel</b> instead, and read the <span class="mono">finalize</span> node's <span class="mono">final</span> field for the answer.
+            <div class="callout">
+              <span class="callout-label">Why Chat works now</span>
+              The state has a <span class="mono">messages</span> key (<span class="mono">MessagesState</span>) &mdash; exactly what Studio needs to enable the <b>Chat tab</b>. No key still runs (a canned scene); set <span class="mono">OPENROUTER_API_KEY</span> in <span class="mono">studio/.env</span> for a real AI story.
             </div>
           </div>
         </div>
@@ -1170,44 +1170,35 @@ $ cd studio &amp;&amp; ../.venv/bin/langgraph dev</code></pre></div>
     <section class="slide">
       <div class="slide-inner">
         <p class="kicker">Studio &middot; the graph it renders</p>
-        <h2>classify &rarr; branch &rarr; finalize</h2>
+        <h2>An interactive storyteller</h2>
         <div class="svg-wrap">
-          <svg viewBox="0 0 980 300" role="img" aria-label="studio agent topology with a four-way router">
+          <svg viewBox="0 0 900 250" role="img" aria-label="studio storyteller topology: START routes to begin or continue, then END">
             <defs>
               <marker id="ah8" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
               </marker>
             </defs>
-            <rect x="20" y="128" width="96" height="46" rx="23" fill="#10a37f"/>
-            <text x="68" y="156" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">START</text>
-            <rect x="150" y="124" width="130" height="54" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
-            <text x="215" y="148" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">classify</text>
-            <text x="215" y="166" text-anchor="middle" font-size="10" fill="#0c7d61">router</text>
-            <rect x="340" y="14" width="150" height="44" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-            <text x="415" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">greeting</text>
-            <rect x="340" y="80" width="150" height="44" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-            <text x="415" y="107" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">farewell</text>
-            <rect x="340" y="146" width="150" height="44" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-            <text x="415" y="173" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">complaint</text>
-            <rect x="340" y="212" width="150" height="44" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-            <text x="415" y="239" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">question</text>
-            <rect x="560" y="124" width="120" height="48" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-            <text x="620" y="153" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">finalize</text>
-            <rect x="730" y="125" width="100" height="46" rx="23" fill="#0d0d0d"/>
-            <text x="780" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">END</text>
-            <line x1="116" y1="151" x2="146" y2="151" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah8)"/>
-            <path d="M280,140 L336,40" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M280,146 L336,104" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M280,156 L336,166" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M280,162 L336,232" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M490,36 L556,138" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M490,102 L556,145" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M490,168 L556,152" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <path d="M490,234 L556,160" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
-            <line x1="680" y1="148" x2="726" y2="148" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah8)"/>
+            <rect x="40" y="100" width="110" height="50" rx="25" fill="#10a37f"/>
+            <text x="95" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">START</text>
+            <text x="95" y="182" text-anchor="middle" font-size="11" fill="#0c7d61">conditional edge</text>
+            <text x="95" y="197" text-anchor="middle" font-size="11" fill="#0c7d61">from START</text>
+            <rect x="360" y="38" width="200" height="52" rx="10" fill="#fff" stroke="#10a37f" stroke-width="2"/>
+            <text x="460" y="60" text-anchor="middle" font-size="14" font-weight="700" fill="#0c7d61">begin</text>
+            <text x="460" y="78" text-anchor="middle" font-size="11" fill="#8a8a90">writes the opening scene</text>
+            <rect x="360" y="150" width="200" height="52" rx="10" fill="#fff" stroke="#10a37f" stroke-width="2"/>
+            <text x="460" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="#0c7d61">continue</text>
+            <text x="460" y="190" text-anchor="middle" font-size="11" fill="#8a8a90">continues the story</text>
+            <rect x="700" y="100" width="110" height="50" rx="25" fill="#0d0d0d"/>
+            <text x="755" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">END</text>
+            <path d="M150,116 L356,66" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
+            <path d="M150,134 L356,176" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
+            <text x="248" y="78" text-anchor="middle" font-size="11" fill="#8a8a90">new story</text>
+            <text x="248" y="168" text-anchor="middle" font-size="11" fill="#8a8a90">later turns</text>
+            <path d="M560,66 L696,114" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
+            <path d="M560,176 L696,136" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah8)"/>
           </svg>
         </div>
-        <p class="muted" style="font-size:16px;">Same shape as Example 1, one branch wider: <span class="mono">classify</span> routes to one of four handlers, all converging on <span class="mono">finalize</span> &rarr; END.</p>
+        <p class="muted" style="font-size:16px;">Built on <span class="mono">MessagesState</span> (a growing <span class="mono">messages</span> list). From <span class="mono">START</span>, a router picks <span class="mono">begin</span> (first turn) or <span class="mono">continue</span> &mdash; so you can <b>chat</b> with it and the story keeps going.</p>
       </div>
     </section>
 
@@ -1230,12 +1221,11 @@ $ cd studio &amp;&amp; ../.venv/bin/langgraph dev</code></pre></div>
               <span class="callout-label">Maps to Example 3</span>
               Studio's <b>Threads</b> are <span class="mono">thread_id</span>s, and <b>time-travel</b> is the checkpointer's saved snapshots &mdash; the same persistence from <span class="mono">memory_demo.py</span>, made clickable.
             </div>
-            <div class="code"><pre><code><span class="tok-com"># classify emits a partial...</span>
-classify  ──&gt;  {intent: <span class="tok-str">"complaint"</span>,
-               sentiment: <span class="tok-str">"negative"</span>}
-<span class="tok-com"># ...finalize reads merged state</span>
-finalize  ──&gt;  {final: <span class="tok-str">"[intent=complaint | ...]"</span>}</code></pre></div>
-            <p class="explain"><b>What this does:</b> read the <span class="mono">finalize</span> node's <span class="mono">final</span> field in the inspector &mdash; it's the converged result after every merge.</p>
+            <div class="code"><pre><code><span class="tok-com"># you type -&gt; a Human message is added</span>
+messages += [Human(<span class="tok-str">"I take the path"</span>)]
+<span class="tok-com"># the node appends the narrator's reply</span>
+continue  ──&gt;  {messages: [AI(<span class="tok-str">"The path winds..."</span>)]}</code></pre></div>
+            <p class="explain"><b>What this does:</b> watch the <span class="mono">messages</span> list grow in the inspector &mdash; each turn appends one reply (the <span class="mono">add_messages</span> reducer merging it in).</p>
           </div>
         </div>
       </div>

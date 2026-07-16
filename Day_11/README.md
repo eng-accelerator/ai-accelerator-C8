@@ -38,7 +38,7 @@ LangGraph Studio. Verified on **LangGraph 1.x**.
 | `agent-eval.py` | **A real tool-using agent + LangSmith evaluations.** An `agent ⇄ tools` loop (add/multiply tools) plus three evaluators — exact-match, **LLM-as-a-judge**, and trajectory — run over a dataset. The agent runs with just an OpenRouter key; the evaluations need a (free) LangSmith key. |
 | `langsmith-simple.py` | **The simplest LangSmith tracing demo.** Two `@traceable` steps form a pipeline (OpenAI → Claude, both via OpenRouter) that shows up as a trace tree at smith.langchain.com. Runs with an OpenRouter key; add a LangSmith key to see the trace. |
 | `storygen.py` | **A bigger app (Streamlit).** A multi-node LangGraph that generates an interactive, choose-your-own-adventure story — shows how far the same State/Nodes/Edges idea scales. Needs an OpenRouter key; run with `streamlit run storygen.py`. |
-| `studio/agent.py` | A small graph designed to be **watched** in LangGraph Studio: `classify → {greeting \| farewell \| complaint \| question} → finalize → END`. Runs with no API key. |
+| `studio/agent.py` | An **interactive storyteller** (same idea as `storygen.py`) built on `MessagesState`, designed to be **watched — and chatted with — in LangGraph Studio**: `START →(new or continue?)→ begin / continue → END`. Because the state has a `messages` key, Studio's **Chat tab works**. Runs with no API key (canned scene); set `OPENROUTER_API_KEY` in `studio/.env` for a real AI story. |
 | `studio/langgraph.json` | The manifest that tells `langgraph dev` which graph to load. |
 | `studio/.env.example` | Optional key template for the Studio graph's LLM branch. |
 | `lesson.html` | A self-contained slide deck for the session. Just open it in any browser (arrow keys / space to navigate). |
@@ -180,9 +180,11 @@ If the venv is **not** activated, use the full path to the CLI instead:
 - Windows (PowerShell): `..\.venv\Scripts\langgraph dev`
 
 This starts a local server at **http://127.0.0.1:2024** and opens the Studio UI in your
-browser. Drive the graph from the **Input panel** (set `message` and hit submit) and read
-the result off the `finalize` node's `final` field. The **Chat tab is greyed out** —
-that's expected, because this graph uses plain string state rather than a message list.
+browser. Because the graph is built on `MessagesState`, the **Chat tab works** — open it
+and **type your move** ("start a fantasy adventure", then "I take the forest path"), and
+the narrator continues the story. Watch the `messages` list grow in the state inspector;
+each turn is saved to the thread, so the story keeps going. (Set `OPENROUTER_API_KEY` in
+`studio/.env` for a real AI-written story; without it you get a short canned scene.)
 
 ---
 
