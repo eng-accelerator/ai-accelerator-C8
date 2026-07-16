@@ -306,7 +306,9 @@
           <div class="card"><h3>3 &middot; Example 1</h3><p><span class="mono">simple_graph.py</span> &mdash; the smallest full graph, with a conditional branch.</p></div>
           <div class="card"><h3>4 &middot; Example 2</h3><p><span class="mono">state_flow_demo.py</span> &mdash; watch state actually move, node by node.</p></div>
           <div class="card"><h3>5 &middot; Example 3</h3><p><span class="mono">memory_demo.py</span> &mdash; a graph that remembers across turns.</p></div>
-          <div class="card"><h3>6 &middot; Studio + Q&amp;A</h3><p>See a graph run <b>visually</b> in LangGraph Studio, then questions.</p></div>
+          <div class="card"><h3>6 &middot; Studio</h3><p>See a graph run <b>visually</b> in LangGraph Studio.</p></div>
+          <div class="card"><h3>7 &middot; LangSmith</h3><p><b>Observability + evals</b> &mdash; trace every step, then score it.</p></div>
+          <div class="card"><h3>8 &middot; Deploy + Q&amp;A</h3><p>Get your agent in front of others <b>for free</b>, then questions.</p></div>
         </div>
         <div class="callout">
           <span class="callout-label">The thread through the whole session</span>
@@ -1039,6 +1041,668 @@ finalize  ──&gt;  {final: <span class="tok-str">"[intent=complaint | ...]"</
       </div>
     </section>
 
+    <!-- ============================================================ -->
+    <!-- LANGSMITH SECTION                                            -->
+    <!-- ============================================================ -->
+
+    <!-- LS1) LANGSMITH INTRO / BLACK-BOX PROBLEM -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Observability &amp; evals</p>
+        <h2>LangSmith &mdash; see inside the black box</h2>
+        <div class="cols">
+          <div class="col">
+            <p>An <b>observability + evaluation platform</b> for LLM apps, from the LangChain team. It works <b>with or without</b> LangChain / LangGraph.</p>
+            <ul class="bullets">
+              <li>LLM apps are <b>non-deterministic black boxes</b> &mdash; the same input can give different answers.</li>
+              <li>You <b>can't debug them by reading logs</b> &mdash; the interesting part is what the model saw and said.</li>
+              <li>LangSmith <b>records exactly what went in and out</b> at every step of every run.</li>
+            </ul>
+            <div class="callout">
+              <span class="callout-label">Key idea</span>
+              Studio shows you <b>one run, live</b>. LangSmith <b>keeps every run</b> &mdash; to debug, test, and watch in production.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 300" role="img" aria-label="LangSmith wraps your agent and records every step">
+                <defs>
+                  <marker id="ah20" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="14" y="14" width="372" height="180" rx="16" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5" stroke-dasharray="6 5"/>
+                <text x="30" y="38" font-size="13" font-weight="700" fill="#0c7d61">LangSmith &mdash; records every step</text>
+                <rect x="30" y="70" width="70" height="40" rx="20" fill="#10a37f"/>
+                <text x="65" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">START</text>
+                <rect x="120" y="66" width="90" height="48" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="165" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">classify</text>
+                <rect x="230" y="66" width="90" height="48" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="275" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">respond</text>
+                <rect x="340" y="70" width="36" height="40" rx="20" fill="#0d0d0d"/>
+                <text x="358" y="95" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">END</text>
+                <line x1="100" y1="90" x2="116" y2="90" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah20)"/>
+                <line x1="210" y1="90" x2="226" y2="90" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah20)"/>
+                <line x1="320" y1="90" x2="336" y2="90" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah20)"/>
+                <line x1="165" y1="114" x2="165" y2="150" stroke="#8a8a90" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#ah20)"/>
+                <line x1="275" y1="114" x2="275" y2="150" stroke="#8a8a90" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#ah20)"/>
+                <text x="200" y="168" text-anchor="middle" font-size="11" fill="#0c7d61">captured: inputs, outputs, timing, tokens</text>
+                <line x1="200" y1="194" x2="200" y2="226" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah20)"/>
+                <rect x="90" y="230" width="220" height="54" rx="10" fill="#fff" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="200" y="252" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">Trace</text>
+                <text x="200" y="270" text-anchor="middle" font-size="11" fill="#8a8a90">a searchable record of the whole run</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS2) TRACES = TREE OF RUNS (signature waterfall) -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">The signature feature</p>
+        <h2>A trace is a tree of runs</h2>
+        <p class="muted" style="font-size:16px;">One run of your app, captured as nested <b>runs (spans)</b> &mdash; the graph run, each node, each LLM call &mdash; each with inputs, outputs, latency, tokens, cost, and errors.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 300" role="img" aria-label="A trace shown as a nested waterfall of runs with timing bars">
+            <line x1="440" y1="30" x2="440" y2="284" stroke="#e5e5e5" stroke-width="1"/>
+            <line x1="620" y1="30" x2="620" y2="284" stroke="#e5e5e5" stroke-width="1"/>
+            <line x1="800" y1="30" x2="800" y2="284" stroke="#e5e5e5" stroke-width="1"/>
+            <text x="440" y="24" text-anchor="middle" font-size="11" fill="#8a8a90">0s</text>
+            <text x="620" y="24" text-anchor="middle" font-size="11" fill="#8a8a90">1s</text>
+            <text x="800" y="24" text-anchor="middle" font-size="11" fill="#8a8a90">2s</text>
+            <!-- row 1: graph run -->
+            <rect x="24" y="42" width="12" height="12" rx="3" fill="#10a37f"/>
+            <text x="44" y="52" font-size="13" font-weight="700" fill="#1a1a1a">graph run</text>
+            <rect x="440" y="40" width="440" height="18" rx="5" fill="#10a37f" opacity="0.85"/>
+            <text x="890" y="53" font-size="11" fill="#8a8a90">2.0s</text>
+            <!-- row 2: classify (node) -->
+            <line x1="52" y1="54" x2="52" y2="86" stroke="#d9d9da" stroke-width="1.5"/>
+            <line x1="52" y1="86" x2="66" y2="86" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="70" y="80" width="10" height="10" rx="2" fill="#8a8a90"/>
+            <text x="88" y="90" font-size="12" font-weight="700" fill="#1a1a1a">classify</text>
+            <text x="150" y="90" font-size="10" fill="#8a8a90">node</text>
+            <rect x="444" y="79" width="30" height="15" rx="4" fill="#8a8a90"/>
+            <text x="770" y="90" font-size="11" fill="#8a8a90">0.12s &middot; 210 tok</text>
+            <!-- row 3: LLM call under classify -->
+            <line x1="80" y1="90" x2="80" y2="120" stroke="#d9d9da" stroke-width="1.5"/>
+            <line x1="80" y1="120" x2="94" y2="120" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="98" y="114" width="10" height="10" rx="2" fill="#e7f6f1" stroke="#10a37f"/>
+            <text x="116" y="124" font-size="12" fill="#1a1a1a">LLM call</text>
+            <rect x="450" y="113" width="22" height="15" rx="4" fill="#cfeee3"/>
+            <text x="770" y="124" font-size="11" fill="#8a8a90">0.10s</text>
+            <!-- row 4: route -->
+            <line x1="52" y1="90" x2="52" y2="152" stroke="#d9d9da" stroke-width="1.5"/>
+            <line x1="52" y1="152" x2="66" y2="152" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="70" y="146" width="10" height="10" rx="2" fill="#8a8a90"/>
+            <text x="88" y="156" font-size="12" font-weight="700" fill="#1a1a1a">route</text>
+            <text x="150" y="156" font-size="10" fill="#8a8a90">node</text>
+            <rect x="476" y="145" width="8" height="15" rx="3" fill="#8a8a90"/>
+            <text x="770" y="156" font-size="11" fill="#8a8a90">0.003s</text>
+            <!-- row 5: respond (node) -->
+            <line x1="52" y1="156" x2="52" y2="188" stroke="#d9d9da" stroke-width="1.5"/>
+            <line x1="52" y1="188" x2="66" y2="188" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="70" y="182" width="10" height="10" rx="2" fill="#8a8a90"/>
+            <text x="88" y="192" font-size="12" font-weight="700" fill="#1a1a1a">respond</text>
+            <text x="150" y="192" font-size="10" fill="#8a8a90">node</text>
+            <rect x="490" y="181" width="388" height="15" rx="4" fill="#8a8a90"/>
+            <text x="762" y="214" font-size="11" fill="#8a8a90">1.78s &middot; 512 tok</text>
+            <!-- row 6: LLM call under respond -->
+            <line x1="80" y1="192" x2="80" y2="248" stroke="#d9d9da" stroke-width="1.5"/>
+            <line x1="80" y1="248" x2="94" y2="248" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="98" y="242" width="10" height="10" rx="2" fill="#e7f6f1" stroke="#10a37f"/>
+            <text x="116" y="252" font-size="12" fill="#1a1a1a">LLM call</text>
+            <rect x="500" y="241" width="372" height="15" rx="4" fill="#cfeee3"/>
+            <text x="762" y="252" font-size="11" fill="#8a8a90">1.72s</text>
+          </svg>
+        </div>
+        <p class="callout" style="max-width:none;"><span class="callout-label">Read it like a flame chart</span> Indentation = nesting; bar length = time. The long <span class="mono">respond &rarr; LLM call</span> bar is instantly where the run spent its time.</p>
+      </div>
+    </section>
+
+    <!-- LS3) TURN IT ON — ENV VARS, NO CODE CHANGE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Zero code change</p>
+        <h2>Turn it on with three env vars</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-com"># .env — no code change needed</span>
+<span class="tok-lg">LANGSMITH_TRACING</span>=true
+<span class="tok-lg">LANGSMITH_API_KEY</span>=lsv2_...
+LANGSMITH_PROJECT=my-project   <span class="tok-com"># optional</span></code></pre></div>
+            <p class="explain"><b>What this does:</b> any LangGraph / LangChain app <b>auto-traces</b> once these are set &mdash; no SDK calls to add. (Older aliases still work: <span class="mono">LANGCHAIN_TRACING_V2</span>, <span class="mono">LANGCHAIN_API_KEY</span>.)</p>
+            <div class="callout">
+              <span class="callout-label">Tie it back</span>
+              Run our <span class="mono">langgraph dev</span> with <span class="mono">LANGSMITH_API_KEY</span> set, and <b>every run shows up as a trace</b> &mdash; nothing else to wire up.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 240" role="img" aria-label="App plus env vars send traces to LangSmith">
+                <defs>
+                  <marker id="ah21" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="20" y="40" width="150" height="70" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="95" y="70" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">your agent</text>
+                <text x="95" y="90" text-anchor="middle" font-size="11" fill="#8a8a90">langgraph dev</text>
+                <rect x="20" y="130" width="150" height="70" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="95" y="156" text-anchor="middle" font-size="11" font-weight="700" fill="#0c7d61">env vars</text>
+                <text x="95" y="176" text-anchor="middle" font-size="10" font-family="monospace" fill="#0c7d61">LANGSMITH_*</text>
+                <text x="95" y="192" text-anchor="middle" font-size="10" fill="#8a8a90">flip tracing on</text>
+                <line x1="95" y1="130" x2="95" y2="112" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah21)"/>
+                <rect x="250" y="80" width="130" height="80" rx="10" fill="#fff" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="315" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">LangSmith</text>
+                <text x="315" y="132" text-anchor="middle" font-size="11" fill="#8a8a90">traces land here</text>
+                <path d="M170,90 C210,90 215,118 246,118" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah21)"/>
+                <text x="208" y="80" text-anchor="middle" font-size="11" fill="#0c7d61">traces</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS4) WHAT A TRACE SHOWS WHEN DEBUGGING -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Debug in seconds, not hours</p>
+        <h2>What a trace shows you</h2>
+        <div class="cols">
+          <div class="col">
+            <ul class="bullets">
+              <li><b>Inputs &amp; outputs</b> at every step &mdash; the exact prompt sent and text returned.</li>
+              <li><b>Latency</b> per run &mdash; find the slow node at a glance.</li>
+              <li><b>Tokens &amp; estimated cost</b> &mdash; per call and rolled up.</li>
+              <li><b>Errors</b> &mdash; the failing step is marked in red.</li>
+            </ul>
+            <div class="callout">
+              <span class="callout-label">The payoff</span>
+              When an answer is wrong, you <b>jump straight to the step that broke</b> and read what it actually saw &mdash; no <span class="mono">print()</span> archaeology.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 250" role="img" aria-label="A single run detail panel with inputs, outputs, latency, tokens, cost and error">
+                <rect x="16" y="14" width="368" height="222" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="32" y="40" font-size="13" font-weight="700" fill="#0c7d61">respond &mdash; run detail</text>
+                <line x1="16" y1="52" x2="384" y2="52" stroke="#e5e5e5" stroke-width="1"/>
+                <text x="32" y="76" font-size="11" font-weight="700" fill="#8a8a90">INPUT</text>
+                <rect x="32" y="84" width="336" height="26" rx="6" fill="#f7f7f8"/>
+                <text x="44" y="101" font-size="11" font-family="monospace" fill="#1a1a1a">{ question: "What is LangGraph?" }</text>
+                <text x="32" y="132" font-size="11" font-weight="700" fill="#8a8a90">OUTPUT</text>
+                <rect x="32" y="140" width="336" height="26" rx="6" fill="#f7f7f8"/>
+                <text x="44" y="157" font-size="11" font-family="monospace" fill="#1a1a1a">{ response: "LangGraph is a framewor…" }</text>
+                <rect x="32" y="184" width="82" height="36" rx="8" fill="#e7f6f1"/>
+                <text x="73" y="200" text-anchor="middle" font-size="10" fill="#8a8a90">latency</text>
+                <text x="73" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">1.72s</text>
+                <rect x="124" y="184" width="82" height="36" rx="8" fill="#e7f6f1"/>
+                <text x="165" y="200" text-anchor="middle" font-size="10" fill="#8a8a90">tokens</text>
+                <text x="165" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">512</text>
+                <rect x="216" y="184" width="82" height="36" rx="8" fill="#e7f6f1"/>
+                <text x="257" y="200" text-anchor="middle" font-size="10" fill="#8a8a90">cost</text>
+                <text x="257" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">$0.001</text>
+                <rect x="308" y="184" width="60" height="36" rx="8" fill="#f7f7f8" stroke="#d9d9da"/>
+                <text x="338" y="200" text-anchor="middle" font-size="10" fill="#8a8a90">errors</text>
+                <text x="338" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">0</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS5) PROJECTS + DATASETS & EXAMPLES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">From runs to test cases</p>
+        <h2>Projects, Datasets &amp; Examples</h2>
+        <div class="cols">
+          <div class="col">
+            <ul class="bullets">
+              <li><b>Projects</b> group traces &mdash; e.g. one per app or environment.</li>
+              <li><b>Datasets</b> hold <b>Examples</b>: saved <span class="mono">input &rarr; expected output</span> pairs.</li>
+              <li>Capture examples <b>straight from real traces</b> (one click) or write them by hand.</li>
+              <li>A dataset is your app's <b>suite of test cases</b> &mdash; the thing you evaluate against.</li>
+            </ul>
+            <div class="callout">
+              <span class="callout-label">The move</span>
+              See a run that's a good (or bad) example? <b>Add it to a dataset.</b> Your test set grows from real usage.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 250" role="img" aria-label="Traces captured into a dataset of examples">
+                <defs>
+                  <marker id="ah22" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <text x="80" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="#8a8a90">real traces</text>
+                <rect x="20" y="40" width="120" height="34" rx="8" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="80" y="61" text-anchor="middle" font-size="11" fill="#1a1a1a">run #128</text>
+                <rect x="20" y="86" width="120" height="34" rx="8" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="80" y="107" text-anchor="middle" font-size="11" fill="#1a1a1a">run #131</text>
+                <rect x="20" y="132" width="120" height="34" rx="8" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="80" y="153" text-anchor="middle" font-size="11" fill="#1a1a1a">run #147</text>
+                <path d="M140,57 C180,57 180,120 214,120" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah22)"/>
+                <path d="M140,103 L214,120" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah22)"/>
+                <path d="M140,149 C180,149 180,124 214,122" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah22)"/>
+                <text x="178" y="98" text-anchor="middle" font-size="10" fill="#0c7d61">save</text>
+                <rect x="220" y="40" width="160" height="170" rx="12" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="300" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">Dataset</text>
+                <line x1="236" y1="76" x2="364" y2="76" stroke="#cfeee3" stroke-width="1"/>
+                <text x="240" y="98" font-size="10" fill="#8a8a90">input</text>
+                <text x="300" y="98" font-size="10" fill="#8a8a90">expected</text>
+                <rect x="236" y="106" width="128" height="24" rx="6" fill="#fff"/>
+                <text x="244" y="122" font-size="10" font-family="monospace" fill="#1a1a1a">"hi"  →  greeting</text>
+                <rect x="236" y="136" width="128" height="24" rx="6" fill="#fff"/>
+                <text x="244" y="152" font-size="10" font-family="monospace" fill="#1a1a1a">"bye" →  farewell</text>
+                <rect x="236" y="166" width="128" height="24" rx="6" fill="#fff"/>
+                <text x="244" y="182" font-size="10" font-family="monospace" fill="#1a1a1a">"refund?" → faq</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS6) EVALUATIONS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Grade your app at scale</p>
+        <h2>Evaluations: dataset &rarr; run &rarr; score</h2>
+        <p class="muted" style="font-size:16px;">Run your app over every example in a dataset, then <b>score each output</b> with an <b>evaluator</b>. Regression-test your prompts and graph like real code.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 190" role="img" aria-label="Evaluation flow: dataset feeds the app, outputs go to an evaluator that produces scores">
+            <defs>
+              <marker id="ah23" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+              </marker>
+            </defs>
+            <rect x="20" y="66" width="150" height="58" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="95" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">Dataset</text>
+            <text x="95" y="109" text-anchor="middle" font-size="10" fill="#0c7d61">examples</text>
+            <rect x="230" y="66" width="150" height="58" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="305" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">run your app</text>
+            <text x="305" y="109" text-anchor="middle" font-size="10" fill="#8a8a90">on each example</text>
+            <rect x="440" y="66" width="150" height="58" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="515" y="99" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">outputs</text>
+            <rect x="650" y="60" width="160" height="70" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="730" y="88" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">evaluator</text>
+            <text x="730" y="107" text-anchor="middle" font-size="10" fill="#0c7d61">scores each output</text>
+            <rect x="850" y="66" width="90" height="58" rx="10" fill="#0d0d0d"/>
+            <text x="895" y="91" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">scores</text>
+            <text x="895" y="109" text-anchor="middle" font-size="10" fill="#cfeee3">pass / fail</text>
+            <line x1="170" y1="95" x2="226" y2="95" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah23)"/>
+            <line x1="380" y1="95" x2="436" y2="95" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah23)"/>
+            <line x1="590" y1="95" x2="646" y2="95" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah23)"/>
+            <line x1="810" y1="95" x2="846" y2="95" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah23)"/>
+            <path d="M95,66 C95,30 305,30 305,64" stroke="#8a8a90" stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#ah23)"/>
+            <text x="200" y="30" text-anchor="middle" font-size="10" fill="#8a8a90">expected output feeds the evaluator too</text>
+          </svg>
+        </div>
+        <div class="cols">
+          <div class="col">
+            <div class="card"><h3>Code / heuristic evaluators</h3><p>Deterministic checks: exact match, contains, valid-JSON, regex, length. Fast and free.</p></div>
+          </div>
+          <div class="col">
+            <div class="card"><h3>LLM-as-a-judge</h3><p>A strong model grades the output against criteria &mdash; for when there's no single exact answer.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS7) LLM-AS-A-JUDGE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">When there's no exact right answer</p>
+        <h2>LLM-as-a-judge</h2>
+        <div class="cols">
+          <div class="col">
+            <p>Use a strong LLM to <b>grade</b> outputs against <b>criteria</b> &mdash; correctness, relevance, helpfulness, groundedness.</p>
+            <ul class="bullets">
+              <li><b>Scoring:</b> the judge reads the output (and any reference) and returns a score + reason.</li>
+              <li><b>Pairwise:</b> show it two answers and ask <b>which is better</b> &mdash; great for comparing prompt versions.</li>
+            </ul>
+            <div class="callout warn">
+              <span class="callout-label">Caveats</span>
+              Judges can be <b>biased or inconsistent</b>. <b>Calibrate against a few human labels</b>, keep the judge prompt <b>specific</b>, and don't treat its score as ground truth.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 240" role="img" aria-label="Candidate output plus criteria go into a judge LLM that returns a verdict and score">
+                <defs>
+                  <marker id="ah24" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="20" y="30" width="140" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="90" y="51" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">candidate output</text>
+                <text x="90" y="67" text-anchor="middle" font-size="10" fill="#8a8a90">"LangGraph is…"</text>
+                <rect x="20" y="118" width="140" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="90" y="139" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">criteria</text>
+                <text x="90" y="155" text-anchor="middle" font-size="10" fill="#8a8a90">correct? relevant?</text>
+                <rect x="210" y="66" width="110" height="62" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="265" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">judge LLM</text>
+                <text x="265" y="112" text-anchor="middle" font-size="10" fill="#0c7d61">grades it</text>
+                <path d="M160,53 C185,53 185,84 206,84" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah24)"/>
+                <path d="M160,141 C185,141 185,110 206,110" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah24)"/>
+                <rect x="210" y="176" width="170" height="46" rx="10" fill="#0d0d0d"/>
+                <text x="295" y="197" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">verdict + score</text>
+                <text x="295" y="213" text-anchor="middle" font-size="10" fill="#cfeee3">0.8 &middot; "accurate, on-topic"</text>
+                <line x1="265" y1="128" x2="265" y2="172" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah24)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS8) FEEDBACK & MONITORING -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Once it's live</p>
+        <h2>Feedback &amp; monitoring in production</h2>
+        <div class="cols">
+          <div class="col">
+            <ul class="bullets">
+              <li><b>Feedback</b> = scores attached to runs &mdash; a human <b>thumbs-up / down</b>, or an automated evaluator running on live traffic.</li>
+              <li><b>Monitoring dashboards</b> track <b>latency, cost, error rate, and feedback</b> over time.</li>
+              <li>Spot a regression the day it ships &mdash; a spike in errors or a drop in thumbs-up stands out on the chart.</li>
+            </ul>
+            <div class="callout">
+              <span class="callout-label">Same data, two uses</span>
+              A trace helps you <b>debug one run</b>; the dashboards help you <b>watch all of them</b> in aggregate.
+            </div>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 240" role="img" aria-label="Production monitoring dashboard with latency, cost and thumbs feedback over time">
+                <rect x="16" y="14" width="368" height="212" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="32" y="40" font-size="12" font-weight="700" fill="#0c7d61">production &mdash; last 7 days</text>
+                <line x1="16" y1="52" x2="384" y2="52" stroke="#e5e5e5" stroke-width="1"/>
+                <text x="34" y="74" font-size="10" fill="#8a8a90">latency p95</text>
+                <polyline points="34,110 74,100 114,104 154,92 194,96 234,84 274,90 314,80 354,86" fill="none" stroke="#10a37f" stroke-width="2"/>
+                <text x="34" y="140" font-size="10" fill="#8a8a90">error rate</text>
+                <polyline points="34,168 74,166 114,170 154,164 194,168 234,160 274,150 314,164 354,166" fill="none" stroke="#e0922a" stroke-width="2"/>
+                <text x="228" y="150" font-size="9" fill="#b06a12">spike</text>
+                <text x="34" y="196" font-size="10" fill="#8a8a90">feedback</text>
+                <rect x="34" y="204" width="120" height="12" rx="6" fill="#e7f6f1"/>
+                <rect x="34" y="204" width="92" height="12" rx="6" fill="#10a37f"/>
+                <text x="168" y="214" font-size="10" fill="#0c7d61">77% &#128077;</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LS9) THE LOOP -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">How it all fits together</p>
+        <h2>The improvement loop</h2>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 280" role="img" aria-label="A loop: dev, dataset, evaluate, ship, monitor, repeat">
+            <defs>
+              <marker id="ah25" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+              </marker>
+            </defs>
+            <rect x="40" y="118" width="140" height="56" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="110" y="142" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">dev</text>
+            <text x="110" y="160" text-anchor="middle" font-size="10" fill="#0c7d61">trace to debug</text>
+            <rect x="250" y="40" width="150" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="325" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">dataset</text>
+            <text x="325" y="82" text-anchor="middle" font-size="10" fill="#8a8a90">save good/bad runs</text>
+            <rect x="470" y="40" width="150" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="545" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">evaluate</text>
+            <text x="545" y="82" text-anchor="middle" font-size="10" fill="#8a8a90">score (incl. judge)</text>
+            <rect x="690" y="118" width="140" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="760" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">ship</text>
+            <rect x="470" y="196" width="150" height="56" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="545" y="220" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">monitor</text>
+            <text x="545" y="238" text-anchor="middle" font-size="10" fill="#0c7d61">latency / cost / feedback</text>
+            <rect x="250" y="196" width="150" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="325" y="228" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">repeat</text>
+            <path d="M170,130 C210,100 220,80 246,72" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah25)"/>
+            <line x1="400" y1="68" x2="466" y2="68" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah25)"/>
+            <path d="M620,72 C660,80 675,100 696,128" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah25)"/>
+            <path d="M760,174 C760,220 660,224 624,224" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah25)"/>
+            <line x1="470" y1="224" x2="404" y2="224" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah25)"/>
+            <path d="M250,224 C180,224 110,210 110,178" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah25)"/>
+          </svg>
+        </div>
+        <div class="cols">
+          <div class="col">
+            <p class="lead" style="max-width:none;">This loop is <span class="em">why LangSmith exists</span>: it turns "the model felt off today" into something you can measure, test, and improve.</p>
+          </div>
+          <div class="col">
+            <p class="muted" style="font-size:16px;">Pricing, briefly: LangSmith has a <b>free Developer tier (single seat)</b> &mdash; plenty for learning and running today's demos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- DEPLOY SECTION                                               -->
+    <!-- ============================================================ -->
+
+    <!-- D1) DEPLOY INTRO -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Ship it</p>
+        <h2>You built an agent &mdash; now how do others use it?</h2>
+        <div class="cols">
+          <div class="col">
+            <p>So far the graph runs <b>on your machine</b>. To let a teammate (or a room full of people) use it, it needs to be <b>reachable</b>.</p>
+            <ul class="bullets">
+              <li>The real question: <b>what's the simplest way to deploy &mdash; for free?</b></li>
+              <li>Good news: for a live demo you're <b>one flag away</b>; for a permanent public app, one small wrapper away.</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="callout">
+              <span class="callout-label">Where we're headed</span>
+              Four tiers, from <b>local-only</b> to <b>managed cloud</b>. The first three are <span class="em">free</span> &mdash; we'll spend our time there.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D2) THE DEPLOY SPECTRUM -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">The landscape</p>
+        <h2>The deploy spectrum: Tier 0 &rarr; 3</h2>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 260" role="img" aria-label="Four deployment tiers left to right, tiers 0 to 2 free, tier 3 paid">
+            <rect x="20" y="44" width="690" height="34" rx="8" fill="#e7f6f1" stroke="#cfeee3"/>
+            <text x="365" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#0c7d61">FREE</text>
+            <rect x="726" y="44" width="214" height="34" rx="8" fill="#fff6e9" stroke="#f3d9a8"/>
+            <text x="833" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#b06a12">PAID</text>
+            <rect x="20" y="98" width="216" height="128" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="128" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#8a8a90">Tier 0</text>
+            <text x="128" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">langgraph dev</text>
+            <text x="128" y="176" text-anchor="middle" font-size="11" fill="#8a8a90">local only</text>
+            <text x="128" y="196" text-anchor="middle" font-size="11" fill="#8a8a90">your machine</text>
+            <rect x="246" y="98" width="216" height="128" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="2"/>
+            <text x="354" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">Tier 1</text>
+            <text x="354" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">dev --tunnel</text>
+            <text x="354" y="176" text-anchor="middle" font-size="11" fill="#0c7d61">public URL, 1 command</text>
+            <text x="354" y="196" text-anchor="middle" font-size="11" fill="#0c7d61">live demo &starf;</text>
+            <rect x="472" y="98" width="238" height="128" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="591" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#8a8a90">Tier 2</text>
+            <text x="591" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">small app + free host</text>
+            <text x="591" y="176" text-anchor="middle" font-size="11" fill="#8a8a90">permanent public URL</text>
+            <text x="591" y="196" text-anchor="middle" font-size="11" fill="#8a8a90">HF / Streamlit / Render</text>
+            <rect x="726" y="98" width="214" height="128" rx="10" fill="#fff" stroke="#e0922a" stroke-width="1.5"/>
+            <text x="833" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#b06a12">Tier 3</text>
+            <text x="833" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">LangGraph Platform</text>
+            <text x="833" y="176" text-anchor="middle" font-size="11" fill="#8a8a90">managed, autoscaling</text>
+            <text x="833" y="196" text-anchor="middle" font-size="11" fill="#8a8a90">production</text>
+          </svg>
+        </div>
+        <p class="muted" style="font-size:16px;">Left to right = more reach, more setup. <b>Tiers 0&ndash;2 cost nothing</b>; Tier 3 is the paid, production option.</p>
+      </div>
+    </section>
+
+    <!-- D3) TIER 1 — dev --tunnel -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Tier 1 &middot; the simplest free deploy</p>
+        <h2>langgraph dev --tunnel</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-com"># same dev server, now public</span>
+$ ../.venv/bin/langgraph dev <span class="tok-lg">--tunnel</span>
+
+<span class="tok-com"># prints a public tunnel URL, e.g.</span>
+<span class="tok-com"># https://&lt;random&gt;.tunnel...  ← share this</span></code></pre></div>
+            <p class="explain"><b>What this does:</b> runs the exact same dev server, but the <span class="mono">--tunnel</span> flag exposes it at a <b>public URL anyone can reach</b> &mdash; even Studio works remotely against it.</p>
+            <ul class="bullets">
+              <li><b>No account, no key, no cost.</b></li>
+              <li>One command &mdash; great to <b>share a live agent</b> or when a network blocks localhost.</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 220" role="img" aria-label="Your machine's dev server exposed through a tunnel to a public URL that others reach">
+                <defs>
+                  <marker id="ah26" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="20" y="80" width="120" height="60" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="80" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">your machine</text>
+                <text x="80" y="124" text-anchor="middle" font-size="10" fill="#8a8a90">langgraph dev</text>
+                <rect x="165" y="82" width="70" height="56" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="200" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#0c7d61">tunnel</text>
+                <text x="200" y="123" text-anchor="middle" font-size="10" fill="#0c7d61">--tunnel</text>
+                <rect x="260" y="80" width="120" height="60" rx="10" fill="#0d0d0d"/>
+                <text x="320" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">public URL</text>
+                <text x="320" y="124" text-anchor="middle" font-size="10" fill="#cfeee3">anyone can reach</text>
+                <line x1="140" y1="110" x2="161" y2="110" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah26)"/>
+                <line x1="235" y1="110" x2="256" y2="110" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah26)"/>
+                <text x="320" y="40" text-anchor="middle" font-size="11" fill="#8a8a90">teammates / the room</text>
+                <path d="M320,50 L320,74" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah26)"/>
+              </svg>
+            </div>
+            <div class="callout">
+              <span class="callout-label">One-liner</span>
+              Want to put a live agent in front of the room, free? <b><span class="mono">langgraph dev --tunnel</span></b> and share the URL.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D4) TIER 2 — WRAP IT IN A SMALL APP -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Tier 2 &middot; permanent &amp; free</p>
+        <h2>Wrap the graph in a small app</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-com"># tiny web app around the compiled graph</span>
+<span class="tok-kw">import</span> streamlit <span class="tok-kw">as</span> st
+<span class="tok-kw">from</span> agent <span class="tok-kw">import</span> graph   <span class="tok-com"># compiled LangGraph</span>
+
+msg = st.<span class="tok-fn">chat_input</span>(<span class="tok-str">"Ask the agent…"</span>)
+<span class="tok-kw">if</span> msg:
+    out = graph.<span class="tok-lg">invoke</span>({<span class="tok-str">"question"</span>: msg})
+    st.<span class="tok-fn">write</span>(out[<span class="tok-str">"response"</span>])</code></pre></div>
+            <p class="explain"><b>What this does:</b> a few lines of UI call <span class="mono">graph.invoke(...)</span> &mdash; the same graph you already built &mdash; then deploy that app to a <b>free host</b> for a permanent, always-on URL.</p>
+          </div>
+          <div class="col">
+            <div class="svg-wrap">
+              <svg viewBox="0 0 400 250" role="img" aria-label="Compiled graph wrapped in a web app deployed to a free host giving a public URL">
+                <defs>
+                  <marker id="ah27" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+                  </marker>
+                </defs>
+                <rect x="30" y="20" width="150" height="46" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="105" y="41" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">compiled graph</text>
+                <text x="105" y="57" text-anchor="middle" font-size="10" fill="#0c7d61">graph.invoke()</text>
+                <rect x="30" y="98" width="150" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="105" y="119" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">small web app</text>
+                <text x="105" y="135" text-anchor="middle" font-size="10" fill="#8a8a90">FastAPI / Streamlit / Gradio</text>
+                <rect x="30" y="176" width="150" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="105" y="197" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">free host</text>
+                <text x="105" y="213" text-anchor="middle" font-size="10" fill="#8a8a90">HF / Streamlit / Render</text>
+                <rect x="250" y="98" width="130" height="46" rx="10" fill="#0d0d0d"/>
+                <text x="315" y="119" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">public URL</text>
+                <text x="315" y="135" text-anchor="middle" font-size="10" fill="#cfeee3">always on</text>
+                <line x1="105" y1="66" x2="105" y2="94" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah27)"/>
+                <line x1="105" y1="144" x2="105" y2="172" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah27)"/>
+                <path d="M180,199 C230,199 246,150 250,132" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah27)"/>
+                <text x="230" y="176" text-anchor="middle" font-size="10" fill="#0c7d61">deploy</text>
+              </svg>
+            </div>
+            <p class="muted" style="font-size:15px;">Free tiers to name: <b>Hugging Face Spaces</b>, <b>Streamlit Community Cloud</b>, <b>Render free web service</b>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D5) TIER 3 — WHAT'S PAID -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Tier 3 &middot; the paid landscape</p>
+        <h2>What's paid: LangGraph Platform</h2>
+        <div class="cols">
+          <div class="col">
+            <ul class="bullets">
+              <li><b>LangGraph Platform</b> &mdash; a <b>one-click cloud deploy</b> straight from the LangSmith UI, with <b>autoscaling, persistence, and a managed API</b>.</li>
+              <li><b>Self-hosting</b> the LangGraph API server (<span class="mono">langgraph build</span> / <span class="mono">langgraph up</span>) needs a <span class="mono">LANGSMITH_API_KEY</span> with deployment access, or a <span class="mono">LANGGRAPH_CLOUD_LICENSE_KEY</span>.</li>
+              <li>This is the <b>production</b> path &mdash; and it is <b>not</b> the free path.</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="callout warn">
+              <span class="callout-label">Be clear with yourself</span>
+              For <b>learning and demos</b>, stay on Tiers 0&ndash;2 (free). Reach for the <b>Platform</b> when you need real uptime, scale, and a managed API &mdash; and are ready to pay for it.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D6) DEPLOY DEMO RUN-OF-SHOW -->
+    <section class="slide">
+      <div class="slide-inner">
+        <p class="kicker">Deploy &middot; run of show</p>
+        <h2>The live demo, step by step</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="code"><pre><code><span class="tok-com"># 1) from the studio folder</span>
+$ cd studio
+
+<span class="tok-com"># 2) start the dev server, publicly</span>
+$ ../.venv/bin/langgraph dev <span class="tok-lg">--tunnel</span>
+
+<span class="tok-com"># 3) copy the printed public URL</span>
+<span class="tok-com">#    → open Studio against it, or share it</span></code></pre></div>
+            <p class="explain"><b>What this does:</b> the same command you already know, plus one flag &mdash; then point the class at the public URL and drive the graph from the Input panel.</p>
+          </div>
+          <div class="col">
+            <div class="callout">
+              <span class="callout-label">Bottom line</span>
+              <b>Free live demo:</b> <span class="mono">langgraph dev --tunnel</span>. <b>Permanent &amp; free:</b> wrap the graph in a small app on a free host. <b>Production:</b> LangGraph Platform (paid).
+            </div>
+            <p class="muted" style="font-size:16px;">If <span class="mono">LANGSMITH_API_KEY</span> is set, every run you demo also lands in LangSmith as a trace &mdash; observability and deploy in one move.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 12) RECAP -->
     <section class="slide">
       <div class="slide-inner">
@@ -1054,6 +1718,8 @@ finalize  ──&gt;  {final: <span class="tok-str">"[intent=complaint | ...]"</
           <li><b>state_flow_demo.py</b> &rarr; <span class="em">how state transfers</span> &mdash; watch IN &rarr; OUT &rarr; MERGE move data between nodes.</li>
           <li><b>memory_demo.py</b> &rarr; <span class="em">persistence &amp; threads</span> &mdash; a checkpointer + thread_id remember across turns.</li>
           <li><b>LangGraph Studio</b> &rarr; <span class="em">see it live</span> &mdash; the same transfer and threads, made visual.</li>
+          <li><b>LangSmith</b> &rarr; <span class="em">observability &amp; evals</span> &mdash; trace every step to debug, then score outputs against a dataset (incl. LLM-as-a-judge).</li>
+          <li><b>Deploy for free</b> &rarr; <span class="em">share it</span> &mdash; <span class="mono">langgraph dev --tunnel</span> for a live demo, or wrap the graph in a small app on a free host.</li>
         </ul>
       </div>
     </section>
