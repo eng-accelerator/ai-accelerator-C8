@@ -382,24 +382,51 @@
     <section class="slide">
       <div class="slide-inner">
         <p class="kicker">Building block 1</p>
-        <h2>State</h2>
-        <div class="cols wide-left">
+        <h2>State &mdash; the note that fills in as it flows</h2>
+        <p>State is one dictionary (a <span class="mono">TypedDict</span>). It starts as your input and <b>gains a field</b> each time a node runs &mdash; it only ever grows.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 960 205" role="img" aria-label="A state dictionary filling in as it passes through two nodes">
+            <defs>
+              <marker id="mkState" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+              </marker>
+            </defs>
+            <text x="150" y="28" text-anchor="middle" font-size="13" fill="#8a8a90">input to invoke()</text>
+            <rect x="15" y="42" width="270" height="150" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="35" y="92" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="35" y="126" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">classification: <tspan fill="#b6b6bb">&mdash;</tspan></text>
+            <text x="35" y="160" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">response: <tspan fill="#b6b6bb">&mdash;</tspan></text>
+            <text x="315" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">classify</text>
+            <line x1="285" y1="117" x2="345" y2="117" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkState)"/>
+            <text x="480" y="28" text-anchor="middle" font-size="13" fill="#8a8a90">after classify runs</text>
+            <rect x="345" y="42" width="270" height="150" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="353" y="108" width="254" height="26" rx="6" fill="#e7f6f1"/>
+            <text x="365" y="92" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="365" y="126" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">classification: <tspan fill="#0c7d61" font-weight="700">'greeting'</tspan></text>
+            <text x="365" y="160" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">response: <tspan fill="#b6b6bb">&mdash;</tspan></text>
+            <text x="645" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">respond</text>
+            <line x1="615" y1="117" x2="675" y2="117" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkState)"/>
+            <text x="810" y="28" text-anchor="middle" font-size="13" fill="#8a8a90">after respond runs</text>
+            <rect x="675" y="42" width="270" height="150" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="683" y="142" width="254" height="26" rx="6" fill="#e7f6f1"/>
+            <text x="695" y="92" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="695" y="126" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">classification: 'greeting'</text>
+            <text x="695" y="160" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#1a1a1a">response: <tspan fill="#0c7d61" font-weight="700">'Hello!'</tspan></text>
+          </svg>
+        </div>
+        <div class="cols">
           <div class="col">
-            <div class="code"><pre><code><span class="tok-kw">from</span> typing <span class="tok-kw">import</span> Optional
-<span class="tok-kw">from</span> typing_extensions <span class="tok-kw">import</span> TypedDict
-
-<span class="tok-kw">class</span> <span class="tok-fn">GraphState</span>(TypedDict):
+            <div class="code"><pre><code><span class="tok-kw">class</span> <span class="tok-fn">GraphState</span>(TypedDict):
     question: Optional[str]
     classification: Optional[str]
     response: Optional[str]</code></pre></div>
-            <p class="explain"><b>What this does:</b> declares the typed shape of the data that travels between nodes.</p>
+            <p class="explain"><b>What this does:</b> declares the fields the shared state is allowed to hold.</p>
           </div>
           <div class="col">
-            <p>State is a shared dictionary (a <span class="mono">TypedDict</span>) that flows through the whole graph.</p>
-            <ul class="bullets">
-              <li>Every node <b>receives</b> the current state.</li>
-              <li>Every node <b>returns a partial dict</b> that LangGraph merges back in.</li>
-            </ul>
+            <div class="callout">
+              <span class="callout-label">The one idea</span>
+              A node never rebuilds the whole state &mdash; it returns just the field it changed, and LangGraph <b>merges</b> it in.
+            </div>
           </div>
         </div>
       </div>
@@ -409,20 +436,50 @@
     <section class="slide">
       <div class="slide-inner">
         <p class="kicker">Building block 2</p>
-        <h2>Nodes</h2>
-        <div class="cols wide-left">
+        <h2>Nodes &mdash; a function that does one step</h2>
+        <p>A node takes the state, does <b>one job</b>, and returns a small <b>partial dict</b> of just what it changed. LangGraph merges that back in.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 1014 200" role="img" aria-label="A node takes state in, returns a partial dict, which gets merged into a bigger state">
+            <defs>
+              <marker id="mkNode" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
+              </marker>
+            </defs>
+            <text x="104" y="40" text-anchor="middle" font-size="13" fill="#8a8a90">state goes in</text>
+            <rect x="12" y="54" width="184" height="108" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="30" y="98" font-family="ui-monospace,Menlo,monospace" font-size="14" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="30" y="132" font-family="ui-monospace,Menlo,monospace" font-size="14" fill="#b6b6bb">classification: &mdash;</text>
+            <line x1="196" y1="108" x2="248" y2="108" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkNode)"/>
+            <text x="349" y="40" text-anchor="middle" font-size="13" fill="#8a8a90">a plain function</text>
+            <rect x="250" y="68" width="200" height="80" rx="12" fill="#fff" stroke="#10a37f" stroke-width="2"/>
+            <text x="350" y="103" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="14" font-weight="700" fill="#0c7d61">classify(state)</text>
+            <text x="350" y="126" text-anchor="middle" font-size="12" fill="#8a8a90">does one step</text>
+            <text x="475" y="96" text-anchor="middle" font-size="12" fill="#8a8a90">returns</text>
+            <line x1="450" y1="108" x2="500" y2="108" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkNode)"/>
+            <text x="606" y="40" text-anchor="middle" font-size="13" fill="#8a8a90">only what changed</text>
+            <rect x="500" y="86" width="212" height="46" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+            <text x="606" y="114" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="12" font-weight="700" fill="#0c7d61">{classification: 'greeting'}</text>
+            <text x="738" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#0c7d61">merge</text>
+            <line x1="712" y1="108" x2="766" y2="108" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkNode)"/>
+            <text x="886" y="40" text-anchor="middle" font-size="13" fill="#8a8a90">bigger state comes out</text>
+            <rect x="768" y="54" width="236" height="108" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <rect x="776" y="116" width="220" height="24" rx="6" fill="#e7f6f1"/>
+            <text x="786" y="98" font-family="ui-monospace,Menlo,monospace" font-size="13" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="786" y="132" font-family="ui-monospace,Menlo,monospace" font-size="13" fill="#1a1a1a">classification: <tspan fill="#0c7d61" font-weight="700">'greeting'</tspan></text>
+          </svg>
+        </div>
+        <div class="cols">
           <div class="col">
-            <div class="code"><pre><code><span class="tok-kw">def</span> <span class="tok-fn">classify_input_node</span>(state: GraphState) -&gt; <span class="tok-kw">dict</span>:
-    question = (state.<span class="tok-fn">get</span>(<span class="tok-str">"question"</span>) <span class="tok-kw">or</span> <span class="tok-str">""</span>).<span class="tok-fn">strip</span>()
-    <span class="tok-kw">return</span> {<span class="tok-str">"classification"</span>: <span class="tok-fn">classify</span>(question)}</code></pre></div>
-            <p class="explain"><b>What this does:</b> a node reads one field from state and returns the field it computed.</p>
+            <div class="code"><pre><code><span class="tok-kw">def</span> <span class="tok-fn">classify</span>(state) -&gt; <span class="tok-kw">dict</span>:
+    q = state[<span class="tok-str">"question"</span>]
+    <span class="tok-kw">return</span> {<span class="tok-str">"classification"</span>: <span class="tok-fn">kind</span>(q)}</code></pre></div>
+            <p class="explain"><b>What this does:</b> reads one field, returns just the field it computed &mdash; not the whole state.</p>
           </div>
           <div class="col">
-            <p>A node is just a plain Python function. It does <b>one step of work</b>.</p>
-            <ul class="bullets">
-              <li>Takes <b>the state</b> as input.</li>
-              <li>Returns a <b>partial dict</b> of updates &mdash; not the whole state.</li>
-            </ul>
+            <div class="callout">
+              <span class="callout-label">The one idea</span>
+              Every node has the <b>same shape</b>: state in, a small dict out. An <b>LLM node looks identical</b> &mdash; the model call just happens inside.
+            </div>
           </div>
         </div>
       </div>
@@ -435,34 +492,45 @@
         <h2>Edges &mdash; including conditional</h2>
         <div class="cols">
           <div class="col">
-            <div class="code"><pre><code>workflow.<span class="tok-lg">add_edge</span>(<span class="tok-lg">START</span>, <span class="tok-str">"classify_input"</span>)
+            <p>Edges are the <b>arrows</b>. A <b>plain edge</b> always runs A&nbsp;&rarr;&nbsp;B. A <b>conditional edge</b> runs a small <b>router</b> that returns a name to pick the branch. <span class="mono">START</span> and <span class="mono">END</span> mark where a run begins and finishes.</p>
+            <div class="code"><pre><code>workflow.<span class="tok-lg">add_edge</span>(<span class="tok-lg">START</span>, <span class="tok-str">"classify"</span>)
 workflow.<span class="tok-lg">add_conditional_edges</span>(
-    <span class="tok-str">"classify_input"</span>,
-    decide_next_node,
-    {<span class="tok-str">"handle_greeting"</span>: <span class="tok-str">"handle_greeting"</span>,
-     <span class="tok-str">"handle_search"</span>: <span class="tok-str">"handle_search"</span>},
+    <span class="tok-str">"classify"</span>, route,
+    {<span class="tok-str">"greeting"</span>: <span class="tok-str">"greeting"</span>,
+     <span class="tok-str">"search"</span>: <span class="tok-str">"search"</span>},
 )</code></pre></div>
-            <p class="explain"><b>What this does:</b> wires the entry edge, then branches to one of two nodes based on the router's return value.</p>
+            <p class="explain"><b>What this does:</b> start at <span class="mono">classify</span>, then let <span class="mono">route</span> pick which branch runs next.</p>
           </div>
           <div class="col">
-            <p>A <b>plain edge</b> always goes A &rarr; B. A <b>conditional edge</b> runs a router function whose return value (mapped to a node name) picks the branch.</p>
             <div class="svg-wrap">
-              <svg viewBox="0 0 360 220" role="img" aria-label="A router branching to two nodes">
+              <svg viewBox="0 0 380 336" role="img" aria-label="A small graph: START to classify, a conditional edge branching to greeting or search, then END">
                 <defs>
-                  <marker id="ah2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <marker id="mkEdge" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
                     <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
                   </marker>
                 </defs>
-                <rect x="110" y="14" width="140" height="50" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
-                <text x="180" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="#0c7d61">router</text>
-                <rect x="10" y="150" width="150" height="50" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-                <text x="85" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">greeting</text>
-                <rect x="200" y="150" width="150" height="50" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-                <text x="275" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">search</text>
-                <path d="M150,64 L90,146" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah2)"/>
-                <path d="M210,64 L270,146" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#ah2)"/>
-                <text x="95" y="118" text-anchor="middle" font-size="11" fill="#8a8a90">if greeting</text>
-                <text x="268" y="118" text-anchor="middle" font-size="11" fill="#8a8a90">else</text>
+                <rect x="140" y="8" width="100" height="38" rx="19" fill="#10a37f"/>
+                <text x="190" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">START</text>
+                <line x1="190" y1="46" x2="190" y2="70" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkEdge)"/>
+                <text x="250" y="63" font-size="10" fill="#8a8a90">plain edge</text>
+                <rect x="110" y="72" width="160" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="190" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">classify</text>
+                <line x1="190" y1="118" x2="190" y2="144" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkEdge)"/>
+                <rect x="106" y="146" width="168" height="50" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
+                <text x="190" y="169" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">route() picks a branch</text>
+                <text x="190" y="187" text-anchor="middle" font-size="11" fill="#0c7d61">conditional edge</text>
+                <path d="M152,196 L96,230" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkEdge)"/>
+                <path d="M228,196 L284,230" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkEdge)"/>
+                <text x="78" y="224" text-anchor="middle" font-size="11" fill="#8a8a90">'greeting'</text>
+                <text x="300" y="224" text-anchor="middle" font-size="11" fill="#8a8a90">'search'</text>
+                <rect x="20" y="234" width="140" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="90" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">greeting</text>
+                <rect x="220" y="234" width="140" height="46" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+                <text x="290" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">search</text>
+                <path d="M92,280 L176,300" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkEdge)"/>
+                <path d="M288,280 L204,300" stroke="#8a8a90" stroke-width="2" fill="none" marker-end="url(#mkEdge)"/>
+                <rect x="140" y="300" width="100" height="36" rx="18" fill="#0d0d0d"/>
+                <text x="190" y="323" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">END</text>
               </svg>
             </div>
           </div>
@@ -476,36 +544,51 @@ workflow.<span class="tok-lg">add_conditional_edges</span>(
         <p class="kicker">Putting it together</p>
         <h2>The lifecycle: build &rarr; compile &rarr; invoke</h2>
         <div class="svg-wrap">
-          <svg viewBox="0 0 940 130" role="img" aria-label="Lifecycle steps from StateGraph to invoke">
+          <svg viewBox="0 0 980 210" role="img" aria-label="Build a graph, compile it into a runnable app, then invoke it with input to get a final state">
             <defs>
-              <marker id="ah3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+              <marker id="mkLife" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L8,3 L0,6 Z" fill="#8a8a90"/>
               </marker>
             </defs>
-            <g font-size="15" font-weight="700">
-              <rect x="10" y="38" width="150" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-              <text x="85" y="62" text-anchor="middle" fill="#1a1a1a">StateGraph</text>
-              <text x="85" y="81" text-anchor="middle" font-size="11" font-weight="400" fill="#8a8a90">(State)</text>
-              <rect x="200" y="38" width="150" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-              <text x="275" y="70" text-anchor="middle" fill="#1a1a1a">add_node</text>
-              <rect x="390" y="38" width="170" height="56" rx="10" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
-              <text x="475" y="62" text-anchor="middle" fill="#1a1a1a">add_edge</text>
-              <text x="475" y="81" text-anchor="middle" font-size="11" font-weight="400" fill="#8a8a90">START / END</text>
-              <rect x="600" y="38" width="150" height="56" rx="10" fill="#e7f6f1" stroke="#10a37f" stroke-width="1.5"/>
-              <text x="675" y="70" text-anchor="middle" fill="#0c7d61">compile()</text>
-              <rect x="790" y="38" width="140" height="56" rx="10" fill="#0d0d0d"/>
-              <text x="860" y="70" text-anchor="middle" fill="#fff">invoke()</text>
-              <line x1="160" y1="66" x2="196" y2="66" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah3)"/>
-              <line x1="350" y1="66" x2="386" y2="66" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah3)"/>
-              <line x1="560" y1="66" x2="596" y2="66" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah3)"/>
-              <line x1="750" y1="66" x2="786" y2="66" stroke="#8a8a90" stroke-width="2" marker-end="url(#ah3)"/>
-            </g>
+            <!-- 1) BUILD: a dashed blueprint holding a mini graph -->
+            <text x="165" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#8a8a90">1 &middot; BUILD &mdash; just a description</text>
+            <rect x="15" y="42" width="300" height="150" rx="12" fill="#fafafa" stroke="#b6b6bb" stroke-width="1.5" stroke-dasharray="6 5"/>
+            <rect x="33" y="104" width="54" height="34" rx="17" fill="#10a37f"/>
+            <text x="60" y="126" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">START</text>
+            <line x1="87" y1="121" x2="97" y2="121" stroke="#8a8a90" stroke-width="1.5" marker-end="url(#mkLife)"/>
+            <rect x="99" y="104" width="58" height="34" rx="8" fill="#fff" stroke="#d9d9da"/>
+            <text x="128" y="125" text-anchor="middle" font-size="10" fill="#1a1a1a">classify</text>
+            <line x1="157" y1="121" x2="167" y2="121" stroke="#8a8a90" stroke-width="1.5" marker-end="url(#mkLife)"/>
+            <rect x="169" y="104" width="60" height="34" rx="8" fill="#fff" stroke="#d9d9da"/>
+            <text x="199" y="125" text-anchor="middle" font-size="10" fill="#1a1a1a">respond</text>
+            <line x1="229" y1="121" x2="239" y2="121" stroke="#8a8a90" stroke-width="1.5" marker-end="url(#mkLife)"/>
+            <rect x="241" y="104" width="48" height="34" rx="17" fill="#0d0d0d"/>
+            <text x="265" y="126" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">END</text>
+            <text x="165" y="172" text-anchor="middle" font-size="11" fill="#8a8a90">nodes + edges &mdash; not running yet</text>
+            <!-- compile() -->
+            <text x="358" y="104" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">compile()</text>
+            <line x1="315" y1="118" x2="402" y2="118" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkLife)"/>
+            <!-- 2) COMPILE: a runnable app -->
+            <text x="500" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#8a8a90">2 &middot; COMPILE &mdash; a runnable app</text>
+            <rect x="402" y="70" width="196" height="96" rx="12" fill="#e7f6f1" stroke="#10a37f" stroke-width="2"/>
+            <text x="500" y="112" text-anchor="middle" font-size="15" font-weight="700" fill="#0c7d61">app</text>
+            <text x="500" y="134" text-anchor="middle" font-size="12" fill="#0c7d61">ready to run</text>
+            <!-- invoke() -->
+            <text x="643" y="104" text-anchor="middle" font-size="13" font-weight="700" fill="#0c7d61">invoke(input)</text>
+            <line x1="598" y1="118" x2="688" y2="118" stroke="#8a8a90" stroke-width="2" marker-end="url(#mkLife)"/>
+            <text x="640" y="150" text-anchor="middle" font-size="11" fill="#8a8a90">pass your input</text>
+            <!-- 3) INVOKE: final state -->
+            <text x="838" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#8a8a90">3 &middot; INVOKE &mdash; the final state</text>
+            <rect x="690" y="42" width="275" height="150" rx="12" fill="#fff" stroke="#d9d9da" stroke-width="1.5"/>
+            <text x="712" y="90" font-family="ui-monospace,Menlo,monospace" font-size="14" fill="#1a1a1a">question: 'Hi'</text>
+            <text x="712" y="123" font-family="ui-monospace,Menlo,monospace" font-size="14" fill="#1a1a1a">classification: 'greeting'</text>
+            <text x="712" y="156" font-family="ui-monospace,Menlo,monospace" font-size="14" fill="#1a1a1a">response: <tspan fill="#0c7d61" font-weight="700">'Hello!'</tspan></text>
           </svg>
         </div>
         <div class="cols">
           <div class="col">
             <div class="code"><pre><code>app = workflow.<span class="tok-fn">compile</span>()
-result = app.<span class="tok-lg">invoke</span>({<span class="tok-str">"question"</span>: <span class="tok-str">"Hi, how are you?"</span>})
+result = app.<span class="tok-lg">invoke</span>({<span class="tok-str">"question"</span>: <span class="tok-str">"Hi"</span>})
 <span class="tok-fn">print</span>(result)</code></pre></div>
             <p class="explain"><b>What this does:</b> compiles the graph definition into a runnable object and executes it with an initial state.</p>
           </div>
